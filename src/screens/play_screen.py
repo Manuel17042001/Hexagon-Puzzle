@@ -6,8 +6,8 @@ import pygame
 import draw
 import hexagonal_map
 import resource_holder
-from model.game import Game
 from math_utils import sin60
+from model.game import Game
 from screens.screen_data import ScreenData
 
 mouse_xy = 0, 0
@@ -15,6 +15,7 @@ tile_xy = 0, 0
 is_picked_up = False
 picked_item = None
 start_grid_x, start_grid_y = 0, 0
+
 
 def update(screen_data: ScreenData, game: Game) -> None:
     """
@@ -56,10 +57,30 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
     pygame.draw.rect(window, (20, 20, 31), ((window_width / 2, 0), (window_width, window_height)))
     pygame.draw.rect(window, (20, 20, 31), ((0, window_height * 3 / 4), (window_width / 2, window_height)))
 
+    window.blit(resource_holder.image_rotation_right,
+                (window_width / 2 / 3 * 1.25, window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
+    window.blit(resource_holder.image_rotation_left,
+                (window_width / 2 / 3 * 2 + window_width / 2 / 3 * 0.25,
+                 window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
+    window.blit(resource_holder.image_flip,
+                (window_width / 2 / 3 * 0.25, window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
+
     pygame.draw.line(window,
                      (255, 255, 255),
                      (0, window_height * 3 / 4),
                      (window_width / 2, window_height * 3 / 4),
+                     3)
+
+    pygame.draw.line(window,
+                     (255, 255, 255),
+                     (window_width / 2 / 3, window_height * 3 / 4),
+                     (window_width / 2 / 3, window_height),
+                     3)
+
+    pygame.draw.line(window,
+                     (255, 255, 255),
+                     (window_width / 2 / 3 * 2, window_height * 3 / 4),
+                     (window_width / 2 / 3 * 2, window_height),
                      3)
 
     pygame.draw.line(window,
@@ -129,9 +150,12 @@ def update_mouse_movement(screen_data, game):
                 grid_x = picked_tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
                 grid_y = picked_tile.get_pos_y() + grid_y * side_length * 1.5
                 if grid_x < screen_data.get_window().get_width() / 2 + side_length or grid_x > window_width - side_length or grid_y < side_length or grid_y > window_height - side_length:
+                    if grid_x < screen_data.get_window().get_width() / 2 / 3:
+                        tiles[picked_item].flip()
+                    else:
+                        tiles[picked_item].rotate(grid_x > screen_data.get_window().get_width() / 2 / 3 * 2)
                     tiles[picked_item].set_pos_x(tile_xy[0])
                     tiles[picked_item].set_pos_y(tile_xy[1])
-                    tiles[picked_item].rotate(False)
 
     if is_picked_up:
         tiles[picked_item].set_pos_x(mouse_x - mouse_xy[0] + tile_xy[0])
