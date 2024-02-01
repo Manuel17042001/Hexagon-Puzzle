@@ -149,11 +149,15 @@ def update_mouse_movement(screen_data, game):
                 grid_x, grid_y = hexagon.get_coordinates()
                 grid_x = picked_tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
                 grid_y = picked_tile.get_pos_y() + grid_y * side_length * 1.5
-                if grid_x < screen_data.get_window().get_width() / 2 + side_length or grid_x > window_width - side_length or grid_y < side_length or grid_y > window_height - side_length:
-                    if grid_x < screen_data.get_window().get_width() / 2 / 3:
-                        tiles[picked_item].flip()
-                    else:
-                        tiles[picked_item].rotate(grid_x > screen_data.get_window().get_width() / 2 / 3 * 2)
+                if (grid_x < screen_data.get_window().get_width() / 2 + side_length or
+                        grid_x > window_width - side_length or
+                        grid_y < side_length or
+                        grid_y > window_height - side_length):
+                    if grid_y > window_height * 3 / 4:
+                        if grid_x < screen_data.get_window().get_width() / 2 / 3:
+                            tiles[picked_item].flip()
+                        else:
+                            tiles[picked_item].rotate(grid_x > window_width / 2 / 3 * 2)
                     tiles[picked_item].set_pos_x(tile_xy[0])
                     tiles[picked_item].set_pos_y(tile_xy[1])
 
