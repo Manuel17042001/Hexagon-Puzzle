@@ -1,4 +1,4 @@
-import hexagonal_map
+from model import hexagonal_map
 
 
 class Game:

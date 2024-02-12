@@ -1,9 +1,9 @@
 import pygame
 
-import draw
-from math_utils import sin60
+import utils.draw_utils as draw_utils
+from utils.math_utils import sin60
 from model.game import Game
-from screens.screen_data import ScreenData
+from model.screen_data import ScreenData
 
 __side_length = 10
 
@@ -69,12 +69,12 @@ def __update_grid_image(screen: ScreenData, game: Game):
     for y in range(n_y):
         for x in range(n_x):
             if grid_x_start <= x < grid_x_start + grid_width and grid_y_start <= y < grid_y_start + grid_height:
-                draw.draw_hexagon_outline(grid_image,
+                draw_utils.draw_hexagon_outline(grid_image,
                                           x=(2 * x + y % 2) * __side_length * sin60,
                                           y=y * __side_length * 1.5,
                                           side_length=__side_length)
             else:
-                draw.draw_hexagon(grid_image,
+                draw_utils.draw_hexagon(grid_image,
                                   x=(2 * x + y % 2) * __side_length * sin60,
                                   y=y * __side_length * 1.5,
                                   side_length=__side_length,

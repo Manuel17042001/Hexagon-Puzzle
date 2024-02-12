@@ -2,10 +2,10 @@ import sys
 
 import pygame
 
-import resource_holder
+from utils import resource_holder
 from model.game import Game
 from screens import play_screen, overview_screen
-from screens.screen_data import ScreenData
+from model.screen_data import ScreenData
 
 pygame.init()
 

@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-import math_utils
+from utils import math_utils
 from model.hexagon import Hexagon
 
 

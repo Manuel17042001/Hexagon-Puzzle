@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-from math_utils import sin60
+from utils.math_utils import sin60
 
 
 def draw_hexagon_outline(window, x, y, side_length):

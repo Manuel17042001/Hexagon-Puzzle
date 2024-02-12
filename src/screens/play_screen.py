@@ -3,13 +3,12 @@ import math
 
 import pygame
 
-import draw
-import hexagonal_map
-import resource_holder
-from math_utils import sin60
+from utils import draw_utils, resource_holder
+from model import hexagonal_map
+from utils.math_utils import sin60
 from model.game import Game
 from model.tile import Tile
-from screens.screen_data import ScreenData
+from model.screen_data import ScreenData
 
 pickup_mouse_pos: (float, float)
 pickup_tile_pos: (float, float)
@@ -256,7 +255,7 @@ def draw_tiles(screen_data, game):
         for hexagon in tile.get_hexagons():
             image = image_b if hexagon.get_color() == 0 else image_o
             h_x, h_y = hexagon.get_coordinates()
-            draw.draw_hexagon(screen_data.get_window(),
+            draw_utils.draw_hexagon(screen_data.get_window(),
                               t_x + (2 * h_x + h_y % 2) * sl * sin60,
                               t_y + h_y * sl * 1.5,
                               screen_data.get_side_length(),
