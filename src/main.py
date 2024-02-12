@@ -4,8 +4,8 @@ import pygame
 
 import resource_holder
 from model.game import Game
-from screens.screen_data import ScreenData
 from screens import play_screen, overview_screen
+from screens.screen_data import ScreenData
 
 pygame.init()
 

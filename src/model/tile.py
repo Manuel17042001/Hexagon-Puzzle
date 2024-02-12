@@ -10,6 +10,7 @@ class Tile(object):
         self.__pos_x = pos_x
         self.__pos_y = pos_y
         self.__hexagons = hexagons
+        self.__grid_pos = None
 
     def get_pos_x(self) -> float:
         return self.__pos_x
@@ -28,6 +29,12 @@ class Tile(object):
 
     def get_hexagons(self) -> list[Hexagon]:
         return self.__hexagons
+
+    def get_grid_pos(self) -> (int, int):
+        return self.__grid_pos
+
+    def set_grid_pos(self, pos: (int, int)) -> None:
+        self.__grid_pos = pos
 
     def normalise_hexagon_pos(self):
         hexagons = deepcopy(self.__hexagons)

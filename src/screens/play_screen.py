@@ -8,12 +8,13 @@ import hexagonal_map
 import resource_holder
 from math_utils import sin60
 from model.game import Game
+from model.tile import Tile
 from screens.screen_data import ScreenData
 
-mouse_xy = 0, 0
-tile_xy = 0, 0
+pickup_mouse_pos: (float, float)
+pickup_tile_pos: (float, float)
 is_picked_up = False
-picked_item = None
+picked_tile: Tile
 start_grid_x, start_grid_y = 0, 0
 
 
@@ -90,80 +91,160 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
                      3)
 
 
-def update_mouse_movement(screen_data, game):
-    mouse_buttons = pygame.mouse.get_pressed()
-    mouse_x, mouse_y = pygame.mouse.get_pos()
+def remove_tile_from_actual_map(tile: Tile, game: Game) -> None:
+    previous_grid_pos = tile.get_grid_pos()
+    if tile.get_grid_pos() is not None:
+        grid_pos_x, grid_pos_y = previous_grid_pos
+        actual_map = game.get_map().get_actual_map()
 
-    global mouse_xy
-    global tile_xy
+        for hexagon in tile.get_hexagons():
+            hexagon_grid_y = hexagon.get_y() + grid_pos_y
+            hexagon_grid_x = hexagon.get_x() + grid_pos_x + (grid_pos_y % 2 != 0 and hexagon_grid_y % 2 == 0)
+            actual_map[hexagon_grid_y][hexagon_grid_x] = None
+
+        tile.set_grid_pos(None)
+
+
+def add_tile_from_actual_map(tile: Tile, game: Game) -> None:
+    grid_width, grid_height = game.get_map().get_grid_size()
+    grid_pos_x, grid_pos_y = tile.get_grid_pos()
+    actual_map = copy.deepcopy(game.get_map().get_actual_map())
+
+    for hexagon in tile.get_hexagons():
+        hexagon_grid_y = hexagon.get_y() + grid_pos_y
+        hexagon_grid_x = hexagon.get_x() + grid_pos_x + (grid_pos_y % 2 != 0 and hexagon_grid_y % 2 == 0)
+
+        if 0 < hexagon_grid_x <= grid_width and 0 < hexagon_grid_y <= grid_height and \
+                actual_map[hexagon_grid_y][hexagon_grid_x] is None:
+            actual_map[hexagon_grid_y][hexagon_grid_x] = hexagon.get_color()
+        else:
+            tile.set_pos_x(pickup_tile_pos[0])
+            tile.set_pos_y(pickup_tile_pos[1])
+            tile.set_grid_pos(None)
+            break
+
+    if tile.get_grid_pos() is not None:
+        game.get_map().set_actual_map(actual_map)
+
+
+def pickup_tile(screen_data: ScreenData, game: Game, mouse_pos: (int, int)) -> None:
+    global picked_tile
+    global pickup_tile_pos
+    global pickup_mouse_pos
     global is_picked_up
-    global picked_item
+
+    mouse_x, mouse_y = mouse_pos
     tiles = game.get_map().get_tiles()
     side_length = screen_data.get_side_length()
+
+    for tile in tiles:
+        tile_pos = tile.get_position()
+        for hexagon in tile.get_hexagons():
+            grid_x, grid_y = hexagon.get_coordinates()
+            grid_x = tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
+            grid_y = tile.get_pos_y() + grid_y * side_length * 1.5
+            distance = math.sqrt((grid_x - mouse_x) ** 2 + (grid_y - mouse_y) ** 2)
+            if distance < side_length:
+                pickup_mouse_pos = mouse_pos
+                pickup_tile_pos = copy.copy(tile_pos)
+                picked_tile = tile
+                is_picked_up = True
+
+                # move tile to the end
+                tile_tmp = picked_tile
+                tiles.remove(tile_tmp)
+                tiles.append(tile_tmp)
+
+                # remove from actual map
+                remove_tile_from_actual_map(picked_tile, game)
+                break
+
+
+def check_is_pos_in_grid(position: (float, float), screen_data: ScreenData, game: Game) -> ((float, float), (int, int)):
+    pos_y, pos_x = position
+    side_length = screen_data.get_side_length()
     grid_width, grid_height = game.get_map().get_grid_size()
-    global start_grid_x, start_grid_y
+
+    for grid_y in range(1, grid_height + 1):
+        for grid_x in range(1, grid_width + 1):
+            pos_grid_x = start_grid_x + (2 * grid_x + grid_y % 2) * side_length * sin60
+            pos_grid_y = start_grid_y + grid_y * side_length * 1.5
+            distance = math.sqrt((pos_grid_x - pos_y) ** 2 + (pos_grid_y - pos_x) ** 2)
+            if distance < side_length:
+                return (pos_grid_x, pos_grid_y), (grid_x, grid_y)
+    return None, None
+
+
+def update_tile_shape(grid_x, screen_data: ScreenData) -> None:
+    window = screen_data.get_window()
+    window_width = window.get_width()
+    if grid_x < screen_data.get_window().get_width() / 2 / 3:
+        picked_tile.flip()
+    else:
+        picked_tile.rotate(grid_x > window_width / 2 / 3 * 2)
+
+
+def put_down_tile(screen_data: ScreenData, game: Game) -> None:
+    global is_picked_up
+    global pickup_tile_pos
+
+    side_length = screen_data.get_side_length()
+    is_picked_up = False
+
+    window = screen_data.get_window()
+    window_width, window_height = window.get_width(), window.get_height()
+
+    # check if tile is in grid
+    pos_tile = picked_tile.get_pos_x(), picked_tile.get_pos_y()
+    pos_grid_xy, grid_xy = check_is_pos_in_grid(pos_tile, screen_data, game)
+    if grid_xy is not None:
+        picked_tile.set_pos_x(pos_grid_xy[0])
+        picked_tile.set_pos_y(pos_grid_xy[1])
+        picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
+        # add tile to actual_map
+        add_tile_from_actual_map(picked_tile, game)
+    else:
+        for hexagon in picked_tile.get_hexagons():
+            grid_x, grid_y = hexagon.get_coordinates()
+            grid_x = picked_tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
+            grid_y = picked_tile.get_pos_y() + grid_y * side_length * 1.5
+            if (grid_x < screen_data.get_window().get_width() / 2 + side_length or
+                    grid_x > window_width - side_length or
+                    grid_y < side_length or
+                    grid_y > window_height - side_length):
+                if grid_y > window_height * 3 / 4:
+                    update_tile_shape(grid_x, screen_data)
+                    if pickup_tile_pos[0] < window_width / 2:
+                        pickup_tile_pos = [900, 200]  # todo make it dynamic
+                picked_tile.set_pos_x(pickup_tile_pos[0])
+                picked_tile.set_pos_y(pickup_tile_pos[1])
+        pos_tile = picked_tile.get_position()
+        pos_grid_xy, grid_xy = check_is_pos_in_grid(pos_tile, screen_data, game)
+        if grid_xy is not None:
+            picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
+            add_tile_from_actual_map(picked_tile, game)
+
+
+def update_picked_tile_pos(mouse_pos) -> None:
+    global picked_tile
+    picked_tile.set_pos_x(mouse_pos[0] - pickup_mouse_pos[0] + pickup_tile_pos[0])
+    picked_tile.set_pos_y(mouse_pos[1] - pickup_mouse_pos[1] + pickup_tile_pos[1])
+
+
+def update_mouse_movement(screen_data, game):
+    mouse_buttons = pygame.mouse.get_pressed()
+    mouse_pos = pygame.mouse.get_pos()
+
+    global is_picked_up
 
     if mouse_buttons[0] == 1 and not is_picked_up:
-        for i in range(len(tiles)):
-            tile = tiles[i]
-            tile_pos = tile.get_position()
-            for hexagon in tile.get_hexagons():
-                grid_x, grid_y = hexagon.get_coordinates()
-                grid_x = tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
-                grid_y = tile.get_pos_y() + grid_y * side_length * 1.5
-                distance = math.sqrt((grid_x - mouse_x) ** 2 + (grid_y - mouse_y) ** 2)
-                if distance < side_length:
-                    picked_item = i
-                    mouse_xy = mouse_x, mouse_y
-                    tile_xy = copy.copy(tile_pos)
-                    is_picked_up = True
-                    # move tile to the end
-                    tile_tmp = tiles[picked_item]
-                    tiles.remove(tile_tmp)
-                    tiles.append(tile_tmp)
-                    break
+        pickup_tile(screen_data, game, mouse_pos)
 
     elif mouse_buttons[0] == 0 and is_picked_up:
-        is_picked_up = False
-        picked_tile = tiles[picked_item]
-        tile_in_grid = False
-
-        t_x, t_y = picked_tile.get_position()
-        for grid_y in range(1, grid_height + 1):
-            for grid_x in range(1, grid_width + 1):
-                pos_grid_x = start_grid_x + (2 * grid_x + grid_y % 2) * side_length * sin60
-                pos_grid_y = start_grid_y + grid_y * side_length * 1.5
-                distance = math.sqrt((pos_grid_x - t_x) ** 2 + (pos_grid_y - t_y) ** 2)
-                if distance < side_length:
-                    picked_tile.set_pos_x(pos_grid_x)
-                    picked_tile.set_pos_y(pos_grid_y)
-                    tile_in_grid = True
-                    break
-
-        # todo check if the tile is inside the puzzle and save the puzzle if it is inside->->
-        window = screen_data.get_window()
-        window_width, window_height = window.get_width(), window.get_height()
-
-        if not tile_in_grid:
-            for hexagon in picked_tile.get_hexagons():
-                grid_x, grid_y = hexagon.get_coordinates()
-                grid_x = picked_tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
-                grid_y = picked_tile.get_pos_y() + grid_y * side_length * 1.5
-                if (grid_x < screen_data.get_window().get_width() / 2 + side_length or
-                        grid_x > window_width - side_length or
-                        grid_y < side_length or
-                        grid_y > window_height - side_length):
-                    if grid_y > window_height * 3 / 4:
-                        if grid_x < screen_data.get_window().get_width() / 2 / 3:
-                            tiles[picked_item].flip()
-                        else:
-                            tiles[picked_item].rotate(grid_x > window_width / 2 / 3 * 2)
-                    tiles[picked_item].set_pos_x(tile_xy[0])
-                    tiles[picked_item].set_pos_y(tile_xy[1])
+        put_down_tile(screen_data, game)
 
     if is_picked_up:
-        tiles[picked_item].set_pos_x(mouse_x - mouse_xy[0] + tile_xy[0])
-        tiles[picked_item].set_pos_y(mouse_y - mouse_xy[1] + tile_xy[1])
+        update_picked_tile_pos(mouse_pos)
 
 
 def draw_tiles(screen_data, game):

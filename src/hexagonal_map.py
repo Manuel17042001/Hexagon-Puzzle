@@ -59,12 +59,19 @@ class HexagonalMap(object):
         self.__generate_map()  # generate map with constrains
         self.__puzzle_map = None
         self.__tiles = self.generate_puzzle()
+        self.__actual_map = [[None for _ in range(self.__height)] for _ in range(self.__width)]
 
     def get_grid_size(self) -> (int, int):
         return self.__width - 2, self.__height - 2
 
     def get_tiles(self) -> list:
         return self.__tiles
+
+    def get_actual_map(self) -> list:
+        return self.__actual_map
+
+    def set_actual_map(self, actual_map: list):
+        self.__actual_map = actual_map
 
     def __remove_single_islands(self) -> None:
         for x in range(self.__width):
