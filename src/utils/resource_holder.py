@@ -22,8 +22,10 @@ image_rotation_right_unscaled = pygame.image.load("./resources/rotation_right.pn
 image_rotation_left = image_rotation_left_unscaled
 image_rotation_right = image_rotation_right_unscaled
 
-image_flip_unscaled = pygame.image.load("./resources/flip.png")
-image_flip = image_flip_unscaled
+image_flip_vertical_unscaled = pygame.image.load("./resources/flip_vertical.png")
+image_flip_horizontal_unscaled = pygame.image.load("./resources/flip_horizontal.png")
+image_flip_vertical = image_flip_vertical_unscaled
+image_flip_horizontal = image_flip_horizontal_unscaled
 
 grid_image = pygame.Surface((0, 0), pygame.SRCALPHA)
 
@@ -34,7 +36,8 @@ def update_screen_data(screen: ScreenData, game: Game):
     global image_hexagon_orange
     global image_rotation_left
     global image_rotation_right
-    global image_flip
+    global image_flip_horizontal
+    global image_flip_vertical
 
     window = screen.get_window()
 
@@ -42,10 +45,13 @@ def update_screen_data(screen: ScreenData, game: Game):
     image_hexagon_orange = pygame.transform.scale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
     image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
-    scale_rotation_flip_image = (window.get_width() / 3 / 2 / 2, window.get_width() / 3 / 2 / 2)
+    scale = min(window.get_width(), window.get_height()) / 6
+
+    scale_rotation_flip_image = (scale, scale)
     image_rotation_left = pygame.transform.scale(image_rotation_left_unscaled, scale_rotation_flip_image)
     image_rotation_right = pygame.transform.scale(image_rotation_right_unscaled, scale_rotation_flip_image)
-    image_flip = pygame.transform.scale(image_flip_unscaled, scale_rotation_flip_image)
+    image_flip_vertical = pygame.transform.scale(image_flip_vertical_unscaled, scale_rotation_flip_image)
+    image_flip_horizontal = pygame.transform.scale(image_flip_horizontal_unscaled, scale_rotation_flip_image)
 
     __update_grid_image(screen, game)
 

@@ -189,8 +189,10 @@ class HexagonalMap(object):
 
         for tile in tiles:
             tile.normalise_hexagon_pos()
-            if random.random() < 0.5:
-                tile.flip()
+            if random.random() < 0.33:
+                tile.flip_horizontal()
+            elif random.random() < 0.66:
+                tile.flip_vertical()
             rotation = int(random.random() / 6) - 3
             while rotation != 0:
                 if rotation < 0:

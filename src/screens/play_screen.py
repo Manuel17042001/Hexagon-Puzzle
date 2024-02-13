@@ -57,30 +57,42 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
     pygame.draw.rect(window, (20, 20, 31), ((window_width / 2, 0), (window_width, window_height)))
     pygame.draw.rect(window, (20, 20, 31), ((0, window_height * 3 / 4), (window_width / 2, window_height)))
 
+    image_size = resource_holder.image_flip_vertical.get_size()
+
+    image_offset_x = (window_width / 4 - image_size[0]) / 2
+    image_offset_y = (window_height / 4 - image_size[1]) / 2
+
+    window.blit(resource_holder.image_flip_vertical,
+                (window_width / 4 * 0 + image_offset_x, window_height * 3 / 4 + image_offset_y))
+    window.blit(resource_holder.image_flip_horizontal,
+                (window_width / 4 * 1 + image_offset_x, window_height * 3 / 4 + image_offset_y))
     window.blit(resource_holder.image_rotation_right,
-                (window_width / 2 / 3 * 1.25, window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
+                (window_width / 4 * 2 + image_offset_x, window_height * 3 / 4 + image_offset_y))
     window.blit(resource_holder.image_rotation_left,
-                (window_width / 2 / 3 * 2 + window_width / 2 / 3 * 0.25,
-                 window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
-    window.blit(resource_holder.image_flip,
-                (window_width / 2 / 3 * 0.25, window_height * 3 / 4 + window_width / 2 / 3 * 0.25))
+                (window_width / 4 * 3 + image_offset_x, window_height * 3 / 4 + image_offset_y))
 
     pygame.draw.line(window,
                      (255, 255, 255),
                      (0, window_height * 3 / 4),
-                     (window_width / 2, window_height * 3 / 4),
+                     (window_width, window_height * 3 / 4),
                      3)
 
     pygame.draw.line(window,
                      (255, 255, 255),
-                     (window_width / 2 / 3, window_height * 3 / 4),
-                     (window_width / 2 / 3, window_height),
+                     (window_width / 4, window_height * 3 / 4),
+                     (window_width / 4, window_height),
                      3)
 
     pygame.draw.line(window,
                      (255, 255, 255),
-                     (window_width / 2 / 3 * 2, window_height * 3 / 4),
-                     (window_width / 2 / 3 * 2, window_height),
+                     (window_width / 4 * 2, window_height * 3 / 4),
+                     (window_width / 4 * 2, window_height),
+                     3)
+
+    pygame.draw.line(window,
+                     (255, 255, 255),
+                     (window_width / 4 * 3, window_height * 3 / 4),
+                     (window_width / 4 * 3, window_height),
                      3)
 
     pygame.draw.line(window,
@@ -177,10 +189,12 @@ def check_is_pos_in_grid(position: (float, float), screen_data: ScreenData, game
 def update_tile_shape(grid_x, screen_data: ScreenData) -> None:
     window = screen_data.get_window()
     window_width = window.get_width()
-    if grid_x < screen_data.get_window().get_width() / 2 / 3:
-        picked_tile.flip()
+    if grid_x < screen_data.get_window().get_width() / 4:
+        picked_tile.flip_horizontal()
+    elif grid_x < screen_data.get_window().get_width() / 2:
+        picked_tile.flip_vertical()
     else:
-        picked_tile.rotate(grid_x > window_width / 2 / 3 * 2)
+        picked_tile.rotate(grid_x > window_width / 4 * 3)
 
 
 def put_down_tile(screen_data: ScreenData, game: Game) -> None:
@@ -207,10 +221,11 @@ def put_down_tile(screen_data: ScreenData, game: Game) -> None:
             grid_x, grid_y = hexagon.get_coordinates()
             grid_x = picked_tile.get_pos_x() + (2 * grid_x + grid_y % 2) * side_length * sin60
             grid_y = picked_tile.get_pos_y() + grid_y * side_length * 1.5
-            if (grid_x < screen_data.get_window().get_width() / 2 + side_length or
-                    grid_x > window_width - side_length or
-                    grid_y < side_length or
-                    grid_y > window_height - side_length):
+            if ((grid_x < screen_data.get_window().get_width() / 2 + side_length or
+                 grid_x > window_width - side_length or
+                 grid_y < side_length or
+                 grid_y > window_height - side_length) or
+                    grid_y > window_height * 3 / 4):
                 if grid_y > window_height * 3 / 4:
                     update_tile_shape(grid_x, screen_data)
                     if pickup_tile_pos[0] < window_width / 2:

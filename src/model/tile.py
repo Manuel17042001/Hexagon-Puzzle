@@ -58,9 +58,13 @@ class Tile(object):
 
         self.__hexagons = hexagons
 
-    def flip(self):
+    def flip_vertical(self):
         for hexagon in self.__hexagons:
             hexagon.set_y(-hexagon.get_y())
+
+    def flip_horizontal(self):
+        for hexagon in self.__hexagons:
+            hexagon.set_x(-hexagon.get_x() - hexagon.get_y() % 2)
 
     def rotate(self, direction: bool):
         # todo: info -> https://gamedev.stackexchange.com/questions/15237/how-do-i-rotate-a-structure-of-hexagonal-tiles-on-a-hexagonal-grid
