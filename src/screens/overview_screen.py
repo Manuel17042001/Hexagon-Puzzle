@@ -1,4 +1,5 @@
 import math
+import sys
 
 import pygame
 
@@ -35,29 +36,46 @@ def update(screen_data: ScreenData) -> None:
 
     text_hexagon = font_title.render("Hexagon", True, (255, 255, 255))
     text_puzzle = font_title.render("Puzzle", True, (255, 255, 255))
-    text_start = font_start.render("START", True, (255, 255, 255))
+    text_play = font_start.render("PLAY", True, (255, 255, 255))
+    text_exit = font_start.render("EXIT", True, (255, 255, 255))
     txt_h_width = text_hexagon.get_width()
     txt_h_height = text_hexagon.get_height()
     txt_p_width = text_puzzle.get_width()
     txt_p_height = text_puzzle.get_height()
-    txt_s_width = text_start.get_width()
-    txt_s_height = text_start.get_height()
+    txt_s_width = text_play.get_width()
+    txt_s_height = text_play.get_height()
+    txt_e_width = text_exit.get_width()
+    txt_e_height = text_exit.get_height()
+
+    max_width = max(txt_s_width, txt_e_width)
     draw_hexagon(window,
-                 (width / 2 - txt_s_width / 2,
-                  height / 4 + txt_h_height / 4 * 3 + txt_p_height / 4 * 3 + height / 5 + txt_s_height / 2),
-                 int(font_size / 3), txt_s_width)
+                 (width / 2 - max_width / 2,
+                  height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_s_height / 2),
+                 int(font_size / 3), max_width)
+    draw_hexagon(window,
+                 (width / 2 - max_width / 2,
+                  height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_e_height / 2 + txt_s_height / 2 + txt_s_height),
+                 int(font_size / 3), max_width)
     window.blit(text_hexagon, (width / 2 - txt_h_width / 2, height / 4))
     window.blit(text_puzzle, (width / 2 - txt_p_width / 2, height / 4 + txt_h_height / 4 * 3))
-    window.blit(text_start,
-                (width / 2 - txt_s_width / 2, height / 4 + txt_h_height / 4 * 3 + txt_p_height / 4 * 3 + height / 5))
+    window.blit(text_play,
+                (width / 2 - txt_s_width / 2, height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5))
+    window.blit(text_exit,
+                (width / 2 - txt_e_width / 2,
+                 height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height / 2 + txt_s_height))
 
     mouse_buttons = pygame.mouse.get_pressed()
     mouse_pos = pygame.mouse.get_pos()
     if mouse_buttons[0] == 1:
         if width / 2 - txt_s_width / 2 < mouse_pos[
-            0] < width / 2 + txt_s_width / 2 and height / 4 + txt_h_height / 4 * 3 + txt_p_height / 4 * 3 + height / 5 - txt_s_height / 2 < \
-                mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 4 * 3 + height / 5 + txt_s_height:
+            0] < width / 2 + txt_s_width / 2 and height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 - txt_s_height / 2 < \
+                mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height:
             screen_data.set_screen_index(1)
+        elif width / 2 - txt_s_width / 2 < mouse_pos[
+            0] < width / 2 + txt_s_width / 2 and height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 - txt_s_height / 2+ txt_s_height / 2 + txt_s_height < \
+                mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height+ txt_s_height / 2 + txt_s_height:
+            pygame.quit()
+            sys.exit()
 
 
 def draw_hexagon(screen, center, size, horizontal_line_length):
