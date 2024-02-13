@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from utils import math_utils
 from model.hexagon import Hexagon
+from utils import math_utils
 
 
 class Tile(object):

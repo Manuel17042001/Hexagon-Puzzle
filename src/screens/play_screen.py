@@ -3,12 +3,12 @@ import math
 
 import pygame
 
-from utils import draw_utils, resource_holder
 from model import hexagonal_map
-from utils.math_utils import sin60
 from model.game import Game
-from model.tile import Tile
 from model.screen_data import ScreenData
+from model.tile import Tile
+from utils import draw_utils, resource_holder
+from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
 pickup_tile_pos: (float, float)
@@ -37,7 +37,7 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
 
     window.fill(screen_data.get_background_color())
 
-    side_length = screen_data.get_side_length()
+    side_length = screen_data.get_hexagon_side_length()
     global start_grid_x, start_grid_y
 
     n_x = int((window_width / 2) / 2 / sin60 / side_length - 1 / 2 + 2)
@@ -134,7 +134,7 @@ def pickup_tile(screen_data: ScreenData, game: Game, mouse_pos: (int, int)) -> N
 
     mouse_x, mouse_y = mouse_pos
     tiles = game.get_map().get_tiles()
-    side_length = screen_data.get_side_length()
+    side_length = screen_data.get_hexagon_side_length()
 
     for tile in tiles:
         tile_pos = tile.get_position()
@@ -161,7 +161,7 @@ def pickup_tile(screen_data: ScreenData, game: Game, mouse_pos: (int, int)) -> N
 
 def check_is_pos_in_grid(position: (float, float), screen_data: ScreenData, game: Game) -> ((float, float), (int, int)):
     pos_y, pos_x = position
-    side_length = screen_data.get_side_length()
+    side_length = screen_data.get_hexagon_side_length()
     grid_width, grid_height = game.get_map().get_grid_size()
 
     for grid_y in range(1, grid_height + 1):
@@ -187,7 +187,7 @@ def put_down_tile(screen_data: ScreenData, game: Game) -> None:
     global is_picked_up
     global pickup_tile_pos
 
-    side_length = screen_data.get_side_length()
+    side_length = screen_data.get_hexagon_side_length()
     is_picked_up = False
 
     window = screen_data.get_window()
@@ -249,17 +249,17 @@ def update_mouse_movement(screen_data, game):
 def draw_tiles(screen_data, game):
     image_o = resource_holder.image_hexagon_orange
     image_b = resource_holder.image_hexagon_blue
-    sl = screen_data.get_side_length()
+    sl = screen_data.get_hexagon_side_length()
     for tile in game.get_map().get_tiles():
         t_x, t_y = tile.get_position()
         for hexagon in tile.get_hexagons():
             image = image_b if hexagon.get_color() == 0 else image_o
             h_x, h_y = hexagon.get_coordinates()
             draw_utils.draw_hexagon(screen_data.get_window(),
-                              t_x + (2 * h_x + h_y % 2) * sl * sin60,
-                              t_y + h_y * sl * 1.5,
-                              screen_data.get_side_length(),
-                              image)
+                                    t_x + (2 * h_x + h_y % 2) * sl * sin60,
+                                    t_y + h_y * sl * 1.5,
+                                    screen_data.get_hexagon_side_length(),
+                                    image)
             for i in range(6):
                 n_x, n_y = hexagonal_map.get_neighbour_coordinates(h_x, h_y, i)
                 b = False

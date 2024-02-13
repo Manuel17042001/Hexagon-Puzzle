@@ -2,8 +2,8 @@ import math
 
 import pygame
 
-from utils import resource_holder
 from model.screen_data import ScreenData
+from utils import resource_holder
 
 
 def update(screen_data: ScreenData) -> None:

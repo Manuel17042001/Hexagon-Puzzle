@@ -3,7 +3,7 @@ class ScreenData(object):
         self.__window = window
         self.__screen_index = 0
         self.__background_color = (20, 20, 31)
-        self.__side_length = 30
+        self.__hexagon_side_length = window.get_width() / 50
 
     def get_screen_index(self):
         return self.__screen_index
@@ -17,5 +17,5 @@ class ScreenData(object):
     def get_background_color(self):
         return self.__background_color
 
-    def get_side_length(self):
-        return self.__side_length
+    def get_hexagon_side_length(self):
+        return self.__hexagon_side_length

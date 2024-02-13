@@ -28,4 +28,3 @@ class Hexagon(object):
 
     def __eq__(self, other: 'Hexagon') -> bool:
         return self.__x == other.get_x() and self.__y == other.get_y() and self.__color == other.get_color()
-

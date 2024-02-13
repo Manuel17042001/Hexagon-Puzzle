@@ -1,9 +1,9 @@
 import pygame
 
 import utils.draw_utils as draw_utils
-from utils.math_utils import sin60
 from model.game import Game
 from model.screen_data import ScreenData
+from utils.math_utils import sin60
 
 __side_length = 10
 
@@ -16,7 +16,7 @@ image_hexagon_blue_unscaled = pygame.image.load("./resources/hexagon_blue.png")
 image_hexagon_orange = pygame.transform.scale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
 image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
-#Todo replace images
+# Todo replace images
 image_rotation_left_unscaled = pygame.image.load("./resources/rotation_left.png")
 image_rotation_right_unscaled = pygame.image.load("./resources/rotation_right.png")
 image_rotation_left = image_rotation_left_unscaled
@@ -38,7 +38,7 @@ def update_screen_data(screen: ScreenData, game: Game):
 
     window = screen.get_window()
 
-    __side_length = screen.get_side_length()
+    __side_length = screen.get_hexagon_side_length()
     image_hexagon_orange = pygame.transform.scale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
     image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
@@ -70,12 +70,12 @@ def __update_grid_image(screen: ScreenData, game: Game):
         for x in range(n_x):
             if grid_x_start <= x < grid_x_start + grid_width and grid_y_start <= y < grid_y_start + grid_height:
                 draw_utils.draw_hexagon_outline(grid_image,
-                                          x=(2 * x + y % 2) * __side_length * sin60,
-                                          y=y * __side_length * 1.5,
-                                          side_length=__side_length)
+                                                x=(2 * x + y % 2) * __side_length * sin60,
+                                                y=y * __side_length * 1.5,
+                                                side_length=__side_length)
             else:
                 draw_utils.draw_hexagon(grid_image,
-                                  x=(2 * x + y % 2) * __side_length * sin60,
-                                  y=y * __side_length * 1.5,
-                                  side_length=__side_length,
-                                  image=image_hexagon_blue)
+                                        x=(2 * x + y % 2) * __side_length * sin60,
+                                        y=y * __side_length * 1.5,
+                                        side_length=__side_length,
+                                        image=image_hexagon_blue)
