@@ -27,6 +27,9 @@ image_flip_horizontal_unscaled = pygame.image.load("./resources/flip_horizontal.
 image_flip_vertical = image_flip_vertical_unscaled
 image_flip_horizontal = image_flip_horizontal_unscaled
 
+image_icon_exit_unscaled = pygame.image.load("./resources/exit_icon.png")
+image_icon_exit = image_icon_exit_unscaled
+
 grid_image = pygame.Surface((0, 0), pygame.SRCALPHA)
 
 
@@ -38,6 +41,7 @@ def update_screen_data(screen: ScreenData, game: Game):
     global image_rotation_right
     global image_flip_horizontal
     global image_flip_vertical
+    global image_icon_exit
 
     window = screen.get_window()
 
@@ -46,12 +50,14 @@ def update_screen_data(screen: ScreenData, game: Game):
     image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
     scale = min(window.get_width(), window.get_height()) / 6
-
     scale_rotation_flip_image = (scale, scale)
     image_rotation_left = pygame.transform.scale(image_rotation_left_unscaled, scale_rotation_flip_image)
     image_rotation_right = pygame.transform.scale(image_rotation_right_unscaled, scale_rotation_flip_image)
     image_flip_vertical = pygame.transform.scale(image_flip_vertical_unscaled, scale_rotation_flip_image)
     image_flip_horizontal = pygame.transform.scale(image_flip_horizontal_unscaled, scale_rotation_flip_image)
+
+    icon_scale = window.get_height() / 15
+    image_icon_exit = pygame.transform.scale(image_icon_exit_unscaled, (icon_scale, icon_scale))
 
     __update_grid_image(screen, game)
 

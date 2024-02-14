@@ -15,6 +15,7 @@ pickup_tile_pos: (float, float)
 is_picked_up = False
 picked_tile: Tile
 start_grid_x, start_grid_y = 0, 0
+mouse_pressed: bool = False
 
 
 def update(screen_data: ScreenData, game: Game) -> None:
@@ -56,6 +57,11 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
 
     pygame.draw.rect(window, (20, 20, 31), ((window_width / 2, 0), (window_width, window_height)))
     pygame.draw.rect(window, (20, 20, 31), ((0, window_height * 3 / 4), (window_width / 2, window_height)))
+    pygame.draw.rect(window, (50, 50, 70), ((window_width / 2, 0), (window_width / 2, window_height / 15)))
+    pygame.draw.rect(window, (0, 0, 0),
+                     ((window_width / 2, window_height / 15), (window_width / 2, window_height / 15 * 0.05)))
+
+    window.blit(resource_holder.image_icon_exit, (window_width - resource_holder.image_icon_exit.get_width(), 0))
 
     image_size = resource_holder.image_flip_vertical.get_size()
 
@@ -229,7 +235,7 @@ def put_down_tile(screen_data: ScreenData, game: Game) -> None:
                 if grid_y > window_height * 3 / 4:
                     update_tile_shape(grid_x, screen_data)
                     if pickup_tile_pos[0] < window_width / 2:
-                        pickup_tile_pos = [900, 200]  # todo make it dynamic
+                        pickup_tile_pos = [window_width / 4 * 3, window_height / 4 * 3 / 2]  # todo make it dynamic
                 picked_tile.set_pos_x(pickup_tile_pos[0])
                 picked_tile.set_pos_y(pickup_tile_pos[1])
         pos_tile = picked_tile.get_position()
@@ -248,8 +254,20 @@ def update_picked_tile_pos(mouse_pos) -> None:
 def update_mouse_movement(screen_data, game):
     mouse_buttons = pygame.mouse.get_pressed()
     mouse_pos = pygame.mouse.get_pos()
+    window = screen_data.get_window()
+    window_width, window_height = window.get_width(), window.get_height()
 
     global is_picked_up
+    global mouse_pressed
+
+    if mouse_buttons[0] == 1:
+        mouse_pressed = True
+
+    if mouse_buttons[0] == 0 and mouse_pressed is True:
+        mouse_pressed = False
+        if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() and mouse_pos[
+            1] < window_height / 15:
+            screen_data.set_screen_index(0)
 
     if mouse_buttons[0] == 1 and not is_picked_up:
         pickup_tile(screen_data, game, mouse_pos)

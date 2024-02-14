@@ -143,8 +143,6 @@ class HexagonalMap(object):
             for j in range(1, self.__height - 1):
                 if map_tmp[i][j] == max_value:
                     max_tiles.append((i, j))
-                elif map_tmp[i][j] < max_value:
-                    max_value = map_tmp[i][j]
                     max_tiles = [(i, j)]
 
         # select randomly one of the hexagons with the most neighbours and set it to 1
