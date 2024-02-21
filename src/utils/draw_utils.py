@@ -49,3 +49,19 @@ def draw_tile(window, tile, side_length, coordinates, min_xy, images, image_map)
                 x2 = x + side_length * math.cos(angle2)
                 y2 = y + side_length * math.sin(angle2)
                 pygame.draw.line(window, (255, 255, 255), (x1, y1), (x2, y2), 4)
+
+
+def draw_hexagon_background(screen, center, size, horizontal_line_length):
+    points = []
+    for i in range(6):
+        angle_rad = math.radians(60 * i)
+        x = int(center[0] + size * math.cos(angle_rad))
+        y = int(center[1] + size * math.sin(angle_rad))
+        points.append((x, y))
+
+    points[0] = (points[0][0] + horizontal_line_length, points[0][1])
+    points[1] = (points[1][0] + horizontal_line_length, points[1][1])
+    points[5] = (points[5][0] + horizontal_line_length, points[5][1])
+
+    pygame.draw.polygon(screen, (20, 20, 31), points)
+    pygame.draw.lines(screen, (255, 255, 255), True, points, 3)

@@ -5,6 +5,7 @@ import pygame
 
 from model.screen_data import ScreenData
 from utils import resource_holder
+from utils.draw_utils import draw_hexagon_background
 
 
 def update(screen_data: ScreenData) -> None:
@@ -48,11 +49,11 @@ def update(screen_data: ScreenData) -> None:
     txt_e_height = text_exit.get_height()
 
     max_width = max(txt_s_width, txt_e_width)
-    draw_hexagon(window,
+    draw_hexagon_background(window,
                  (width / 2 - max_width / 2,
                   height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_s_height / 2),
                  int(font_size / 3), max_width)
-    draw_hexagon(window,
+    draw_hexagon_background(window,
                  (width / 2 - max_width / 2,
                   height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_e_height / 2 + txt_s_height / 2 + txt_s_height),
                  int(font_size / 3), max_width)
@@ -76,19 +77,3 @@ def update(screen_data: ScreenData) -> None:
                 mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height+ txt_s_height / 2 + txt_s_height:
             pygame.quit()
             sys.exit()
-
-
-def draw_hexagon(screen, center, size, horizontal_line_length):
-    points = []
-    for i in range(6):
-        angle_rad = math.radians(60 * i)
-        x = int(center[0] + size * math.cos(angle_rad))
-        y = int(center[1] + size * math.sin(angle_rad))
-        points.append((x, y))
-
-    points[0] = (points[0][0] + horizontal_line_length, points[0][1])
-    points[1] = (points[1][0] + horizontal_line_length, points[1][1])
-    points[5] = (points[5][0] + horizontal_line_length, points[5][1])
-
-    pygame.draw.polygon(screen, (50, 50, 120), points)
-    pygame.draw.lines(screen, (255, 255, 255), True, points, 3)

@@ -8,6 +8,10 @@ class Hexagon(object):
         self.__y = y
         self.__color = color
 
+    def set_coordinates(self, x: int, y: int) -> None:
+        self.__x = x
+        self.__y = y
+
     def get_x(self) -> int:
         return self.__x
 

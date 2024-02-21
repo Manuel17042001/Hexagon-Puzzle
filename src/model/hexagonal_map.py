@@ -59,7 +59,7 @@ class HexagonalMap(object):
         self.__generate_map()  # generate map with constrains
         self.__puzzle_map = None
         self.__tiles = self.generate_puzzle()
-        self.__actual_map = [[None for _ in range(self.__height)] for _ in range(self.__width)]
+        self.__actual_map = [[None for _ in range(self.__width)] for _ in range(self.__height)]
 
     def get_grid_size(self) -> (int, int):
         return self.__width - 2, self.__height - 2

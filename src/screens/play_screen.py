@@ -7,7 +7,8 @@ from model import hexagonal_map
 from model.game import Game
 from model.screen_data import ScreenData
 from model.tile import Tile
-from utils import draw_utils, resource_holder
+from utils import draw_utils, resource_holder, system_utils
+from utils.draw_utils import draw_hexagon_background
 from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
@@ -16,6 +17,9 @@ is_picked_up = False
 picked_tile: Tile
 start_grid_x, start_grid_y = 0, 0
 mouse_pressed: bool = False
+
+hexagons_hint: list[(int, int)] = []
+last_no_solution_time = None
 
 
 def update(screen_data: ScreenData, game: Game) -> None:
@@ -29,6 +33,21 @@ def update(screen_data: ScreenData, game: Game) -> None:
     update_mouse_movement(screen_data, game)
 
     draw_tiles(screen_data, game)
+
+    draw_hint(screen_data, game)
+
+    global last_no_solution_time
+    if last_no_solution_time is not None and last_no_solution_time + 1000 > system_utils.time_in_millis():
+        font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+        font_size = int(screen_data.get_window().get_height() * 0.1)
+        font = pygame.font.Font(font_path, int(font_size / 3))
+        text_no_solution = font.render("No solution found!", True, (255, 0, 0))
+        window = screen_data.get_window()
+        width, height = window.get_size()
+        txt_width, txt_height = text_no_solution.get_size()
+        draw_hexagon_background(window, (width / 4 - txt_width / 2, height / 4 * 2.5 + txt_height / 2),
+                                int(font_size / 3), txt_width)
+        window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
 
 
 def draw_layout(screen_data: ScreenData, game: Game) -> None:
@@ -62,6 +81,8 @@ def draw_layout(screen_data: ScreenData, game: Game) -> None:
                      ((window_width / 2, window_height / 15), (window_width / 2, window_height / 15 * 0.05)))
 
     window.blit(resource_holder.image_icon_exit, (window_width - resource_holder.image_icon_exit.get_width(), 0))
+    window.blit(resource_holder.image_icon_hint, (
+        window_width - resource_holder.image_icon_exit.get_width() - resource_holder.image_icon_hint.get_width(), 0))
 
     image_size = resource_holder.image_flip_vertical.get_size()
 
@@ -259,6 +280,8 @@ def update_mouse_movement(screen_data, game):
 
     global is_picked_up
     global mouse_pressed
+    global hexagons_hint
+    global last_no_solution_time
 
     if mouse_buttons[0] == 1:
         mouse_pressed = True
@@ -268,6 +291,14 @@ def update_mouse_movement(screen_data, game):
         if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() and mouse_pos[
             1] < window_height / 15:
             screen_data.set_screen_index(0)
+        elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2 and mouse_pos[
+            1] < window_height / 15:
+            hint = game.get_hint(game)
+            if hint is not None:
+                hexagons_hint = game.get_hint(game)[1]
+            else:
+                hexagons_hint = []
+                last_no_solution_time = system_utils.time_in_millis()
 
     if mouse_buttons[0] == 1 and not is_picked_up:
         pickup_tile(screen_data, game, mouse_pos)
@@ -309,3 +340,36 @@ def draw_tiles(screen_data, game):
                     x2 = t_x + (2 * h_x + h_y % 2) * sl * sin60 + sl * math.cos(angle2)
                     y2 = t_y + h_y * sl * 1.5 + sl * math.sin(angle2)
                     pygame.draw.line(screen_data.get_window(), (255, 255, 255), (x1, y1), (x2, y2), 5)
+
+
+def draw_hint(screen_data, game):
+    window = screen_data.get_window()
+    window_width, window_height = window.get_width(), window.get_height()
+    grid_width, grid_height = game.get_map().get_grid_size()
+    sl = screen_data.get_hexagon_side_length()
+    n_x = int((window_width / 2) / 2 / sin60 / sl - 1 / 2 + 2)
+    n_y = int(((window_height / 4 * 3) / sl - 1 / 2) * 2 / 3 + 2)
+
+    grid_x_start = int((n_x - grid_width) / 2) - 1 - 1
+    grid_y_start = int((n_y - grid_height) / 2) - 2
+    t_x = (2 * grid_x_start + grid_y_start % 2) * sl * sin60
+    t_y = grid_y_start * sl * 1.5
+    global hexagons_hint
+    for hexagon in hexagons_hint:
+        h_x, h_y = hexagon
+        for i in range(6):
+            n_x, n_y = hexagonal_map.get_neighbour_coordinates(h_x, h_y, i)
+            b = False
+            for hexagon1 in hexagons_hint:
+                xx, yy = hexagon1
+                if n_x == xx and n_y == yy:
+                    b = True
+                    break
+            if not b:
+                angle1 = math.radians(60 * (i + 2) + 90)
+                angle2 = math.radians(60 * (i + 3) + 90)
+                x1 = t_x + (2 * h_x + h_y % 2) * sl * sin60 + sl * math.cos(angle1)
+                y1 = t_y + h_y * sl * 1.5 + sl * math.sin(angle1)
+                x2 = t_x + (2 * h_x + h_y % 2) * sl * sin60 + sl * math.cos(angle2)
+                y2 = t_y + h_y * sl * 1.5 + sl * math.sin(angle2)
+                pygame.draw.line(screen_data.get_window(), (103, 255, 0), (x1, y1), (x2, y2), 3)

@@ -21,7 +21,7 @@ screen = ScreenData(window)
 
 clock = pygame.time.Clock()
 
-game = Game(5, 5)
+game = Game(4, 5)
 resource_holder.update_screen_data(screen, game)
 
 while running:
