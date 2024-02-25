@@ -1,67 +1,63 @@
-import math
-
 import pygame
 
-from utils.math_utils import sin60
+from utils.math_utils import get_corner_points_of_hexagon_facing_up, get_corner_points_of_hexagon_facing_to_side
 
 
-def draw_hexagon_outline(window, x, y, side_length):
-    points = []
-    for i in range(6):
-        angle = math.radians(60 * i + 90)
-        x_point = x + side_length * math.cos(angle)
-        y_point = y + side_length * math.sin(angle)
-        points.append((x_point, y_point))
-    pygame.draw.polygon(window, (60, 60, 82), points, 2)
+def draw_hexagon_outline(surface: pygame.Surface, center: tuple[float, float], side_length: float,
+                         color: tuple[int, int, int], thickness: int) -> None:
+    """
+    Draw the outline of a hexagon on the specified surface.
+    :param surface: The surface to draw on.
+    :param center: The center coordinates of the hexagon.
+    :param side_length: The length of each side of the hexagon.
+    :param color: The color of the hexagon outline.
+    :param thickness: The thickness of the hexagon outline.
+    """
+    points = get_corner_points_of_hexagon_facing_up(center, side_length)
+    pygame.draw.polygon(surface, color, points, thickness)
 
 
-def draw_hexagon(window: pygame.Surface, x: int, y: int, side_length: int, image) -> None:
-    window.blit(image, (x - side_length, y - side_length))
+def draw_hexagon_image(surface: pygame.Surface, center: tuple[float, float], side_length: float, image) -> None:
+    """
+    Draw an image of a hexagon on the specified surface.
+    :param surface: The surface to draw on.
+    :param center: The center coordinates of the hexagon.
+    :param side_length: The length of each side of the hexagon.
+    :param image: The image to draw.
+    """
+    surface.blit(image, (center[0] - side_length, center[1] - side_length))
 
 
-def draw_hexagon_puzzle(window, x, y, side_length, color):
-    points = []
-    for i in range(6):
-        angle = math.radians(60 * i + 90)
-        x_point = x + side_length * math.cos(angle)
-        y_point = y + side_length * math.sin(angle)
-        points.append((x_point, y_point))
-    pygame.draw.polygon(window, color, points)
+def draw_stretched_hexagon(surface: pygame.Surface, center: tuple[float, float], side_length: float,
+                           horizontal_line_length: float, background_color: tuple[int, int, int, int],
+                           line_color: tuple[int, int, int],
+                           line_thickness: int) -> None:
+    """
+    Draw a stretched hexagon on the specified surface.
+    :param surface: The surface to draw on.
+    :param center: The center coordinates of the hexagon.
+    :param side_length: The length of each side of the hexagon.
+    :param horizontal_line_length: The length of the horizontal line to stretch the hexagon.
+    :param background_color: The background color of the stretched hexagon with alpha channel.
+    :param line_color: The color of the lines outlining the stretched hexagon.
+    :param line_thickness: The thickness of the lines outlining the stretched hexagon.
+    """
 
+    # Create a transparent surface
+    stretched_hexagon = pygame.Surface((2 * side_length + horizontal_line_length, 2 * side_length), pygame.SRCALPHA)
 
-def draw_tile(window, tile, side_length, coordinates, min_xy, images, image_map):
-    for xx, yy in tile:
-        x = coordinates[0] + (2 * (xx - min_xy[0]) + yy % 2) * side_length * sin60
-        y = coordinates[1] + (yy - min_xy[1]) * side_length * 1.5
-        window.blit(images[image_map[xx][yy]], (x - side_length, y - side_length))
-        for i in range(6):
-            n_x, n_y = map.get_neighbour_coordinates(xx, yy, i)
-            b = False
-            for t_x, t_y in tile:
-                if n_x == t_x and n_y == t_y:
-                    b = True
-                    break
-            if not b:
-                angle1 = math.radians(60 * (i + 2) + 90)
-                angle2 = math.radians(60 * (i + 3) + 90)
-                x1 = x + side_length * math.cos(angle1)
-                y1 = y + side_length * math.sin(angle1)
-                x2 = x + side_length * math.cos(angle2)
-                y2 = y + side_length * math.sin(angle2)
-                pygame.draw.line(window, (255, 255, 255), (x1, y1), (x2, y2), 4)
+    # Get the points of a hexagon
+    points = get_corner_points_of_hexagon_facing_to_side((side_length, side_length),
+                                                         side_length)
 
-
-def draw_hexagon_background(screen, center, size, horizontal_line_length):
-    points = []
-    for i in range(6):
-        angle_rad = math.radians(60 * i)
-        x = int(center[0] + size * math.cos(angle_rad))
-        y = int(center[1] + size * math.sin(angle_rad))
-        points.append((x, y))
-
+    # Stretch the horizontal line
     points[0] = (points[0][0] + horizontal_line_length, points[0][1])
     points[1] = (points[1][0] + horizontal_line_length, points[1][1])
     points[5] = (points[5][0] + horizontal_line_length, points[5][1])
 
-    pygame.draw.polygon(screen, (20, 20, 31), points)
-    pygame.draw.lines(screen, (255, 255, 255), True, points, 3)
+    # Draw the background and the line on the transparent surface
+    pygame.draw.polygon(stretched_hexagon, background_color, points)
+    pygame.draw.lines(stretched_hexagon, line_color, True, points, line_thickness)
+
+    # Draw the stretched hexagon on the surface
+    surface.blit(stretched_hexagon, (center[0] - side_length, center[1] - side_length))

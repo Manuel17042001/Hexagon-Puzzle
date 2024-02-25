@@ -14,8 +14,6 @@ class Game:
         return self.map
 
     def get_hint(self, game):
-        # TODO implement function
-
         grid_width, grid_height = self.get_map().get_grid_size()
 
         row_tile = copy.deepcopy(self.get_map().get_tiles())

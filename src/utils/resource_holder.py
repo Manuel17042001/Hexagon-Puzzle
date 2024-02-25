@@ -22,14 +22,17 @@ image_rotation_right_unscaled = pygame.image.load("./resources/rotation_right.pn
 image_rotation_left = image_rotation_left_unscaled
 image_rotation_right = image_rotation_right_unscaled
 
+# Todo replace images
 image_flip_vertical_unscaled = pygame.image.load("./resources/flip_vertical.png")
 image_flip_horizontal_unscaled = pygame.image.load("./resources/flip_horizontal.png")
 image_flip_vertical = image_flip_vertical_unscaled
 image_flip_horizontal = image_flip_horizontal_unscaled
 
+# Todo replace images
 image_icon_exit_unscaled = pygame.image.load("./resources/exit_icon.png")
 image_icon_exit = image_icon_exit_unscaled
 
+# Todo replace images
 image_icon_hint_unscaled = pygame.image.load("./resources/hint_icon.png")
 image_icon_hint = image_icon_hint_unscaled
 
@@ -86,13 +89,12 @@ def __update_grid_image(screen: ScreenData, game: Game):
     for y in range(n_y):
         for x in range(n_x):
             if grid_x_start <= x < grid_x_start + grid_width and grid_y_start <= y < grid_y_start + grid_height:
-                draw_utils.draw_hexagon_outline(grid_image,
-                                                x=(2 * x + y % 2) * __side_length * sin60,
-                                                y=y * __side_length * 1.5,
-                                                side_length=__side_length)
+                 draw_utils.draw_hexagon_outline(grid_image,
+                                                ((2 * x + y % 2) * __side_length * sin60, y * __side_length * 1.5),
+                                                __side_length, (60, 60, 82), 2)
             else:
-                draw_utils.draw_hexagon(grid_image,
-                                        x=(2 * x + y % 2) * __side_length * sin60,
-                                        y=y * __side_length * 1.5,
-                                        side_length=__side_length,
-                                        image=image_hexagon_blue)
+                draw_utils.draw_hexagon_image(grid_image,
+                                              ((2 * x + y % 2) * __side_length * sin60,
+                                               int(y * __side_length * 1.5)),
+                                              __side_length,
+                                              image_hexagon_blue)

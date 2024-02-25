@@ -1,11 +1,10 @@
-import math
 import sys
 
 import pygame
 
 from model.screen_data import ScreenData
 from utils import resource_holder
-from utils.draw_utils import draw_hexagon_background
+from utils.draw_utils import draw_stretched_hexagon
 
 
 def update(screen_data: ScreenData) -> None:
@@ -49,14 +48,14 @@ def update(screen_data: ScreenData) -> None:
     txt_e_height = text_exit.get_height()
 
     max_width = max(txt_s_width, txt_e_width)
-    draw_hexagon_background(window,
-                 (width / 2 - max_width / 2,
-                  height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_s_height / 2),
-                 int(font_size / 3), max_width)
-    draw_hexagon_background(window,
-                 (width / 2 - max_width / 2,
-                  height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_e_height / 2 + txt_s_height / 2 + txt_s_height),
-                 int(font_size / 3), max_width)
+    draw_stretched_hexagon(window,
+                           (width / 2 - max_width / 2,
+                            height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_s_height / 2),
+                           int(font_size / 3), max_width, (0, 0, 0, 100), (255, 255, 255), 3)
+    draw_stretched_hexagon(window,
+                           (width / 2 - max_width / 2,
+                            height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 + txt_e_height / 2 + txt_s_height / 2 + txt_s_height),
+                           int(font_size / 3), max_width, (0, 0, 0, 100), (255, 255, 255), 3)
     window.blit(text_hexagon, (width / 2 - txt_h_width / 2, height / 4))
     window.blit(text_puzzle, (width / 2 - txt_p_width / 2, height / 4 + txt_h_height / 4 * 3))
     window.blit(text_play,
@@ -73,7 +72,8 @@ def update(screen_data: ScreenData) -> None:
                 mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height:
             screen_data.set_screen_index(1)
         elif width / 2 - txt_s_width / 2 < mouse_pos[
-            0] < width / 2 + txt_s_width / 2 and height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 - txt_s_height / 2+ txt_s_height / 2 + txt_s_height < \
-                mouse_pos[1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height+ txt_s_height / 2 + txt_s_height:
+            0] < width / 2 + txt_s_width / 2 and height / 4 + txt_h_height / 2 + txt_p_height / 4 * 3 + height / 5 - txt_s_height / 2 + txt_s_height / 2 + txt_s_height < \
+                mouse_pos[
+                    1] < height / 4 + txt_h_height / 4 * 3 + txt_p_height / 2 + height / 5 + txt_s_height + txt_s_height / 2 + txt_s_height:
             pygame.quit()
             sys.exit()

@@ -8,7 +8,7 @@ from model.game import Game
 from model.screen_data import ScreenData
 from model.tile import Tile
 from utils import draw_utils, resource_holder, system_utils
-from utils.draw_utils import draw_hexagon_background
+from utils.draw_utils import draw_stretched_hexagon
 from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
@@ -45,8 +45,8 @@ def update(screen_data: ScreenData, game: Game) -> None:
         window = screen_data.get_window()
         width, height = window.get_size()
         txt_width, txt_height = text_no_solution.get_size()
-        draw_hexagon_background(window, (width / 4 - txt_width / 2, height / 4 * 2.5 + txt_height / 2),
-                                int(font_size / 3), txt_width)
+        draw_stretched_hexagon(window, (width / 4 - txt_width / 2, height / 4 * 2.5 + txt_height / 2),
+                               int(font_size / 3), txt_width, (255, 255, 255, 150), (255, 255, 255), 3)
         window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
 
 
@@ -319,11 +319,11 @@ def draw_tiles(screen_data, game):
         for hexagon in tile.get_hexagons():
             image = image_b if hexagon.get_color() == 0 else image_o
             h_x, h_y = hexagon.get_coordinates()
-            draw_utils.draw_hexagon(screen_data.get_window(),
-                                    t_x + (2 * h_x + h_y % 2) * sl * sin60,
-                                    t_y + h_y * sl * 1.5,
-                                    screen_data.get_hexagon_side_length(),
-                                    image)
+            draw_utils.draw_hexagon_image(screen_data.get_window(),
+                                          (t_x + (2 * h_x + h_y % 2) * sl * sin60,
+                                           t_y + h_y * sl * 1.5),
+                                          screen_data.get_hexagon_side_length(),
+                                          image)
             for i in range(6):
                 n_x, n_y = hexagonal_map.get_neighbour_coordinates(h_x, h_y, i)
                 b = False

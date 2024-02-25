@@ -56,30 +56,20 @@ def can_be_placed(width, height, tile, game):
     return True
 
 
-def place_tile_at_position(x, y, tile):
-    # todo refactor
+def place_tile_at_position(grid_x: int, grid_y: int, tile: Tile) -> None:
     hexagons: list = cpy(tile.get_hexagons())
-    hexagon_0 = hexagons[0]
-    hexagon_0_x, hexagon_0_y = hexagon_0.get_coordinates()
-    if (hexagon_0_x, hexagon_0_y) == (x, y):
+    hexagon_0_x, hexagon_0_y = hexagons[0].get_coordinates()
+    if (hexagon_0_x, hexagon_0_y) == (grid_x, grid_y):
         return
-    y_dif = y - hexagon_0_y
-    x_dif = x - hexagon_0_x
-    if hexagon_0_y % 2 == y % 2:
-        for hexagon in hexagons:
-            hexagon_x, hexagon_y = hexagon.get_x() + x_dif, hexagon.get_y() + y_dif
-            hexagon.set_coordinates(hexagon_x, hexagon_y)
-    else:
-        for hexagon in hexagons:
-            new_y = hexagon.get_y() + y_dif
-            if new_y % 2 == y % 2:
-                hexagon_x, hexagon_y = (hexagon.get_x() + x_dif, new_y)
-            elif new_y % 2 == 0:
-                hexagon_x, hexagon_y = (hexagon.get_x() + x_dif + 1, new_y)
-            else:
-                hexagon_x, hexagon_y = (hexagon.get_x() + x_dif - 1, new_y)
+    y_dif = grid_y - hexagon_0_y
+    x_dif = grid_x - hexagon_0_x
 
-            hexagon.set_coordinates(hexagon_x, hexagon_y)
+    for hexagon in hexagons:
+        hexagon_y = hexagon.get_y() + y_dif
+        hexagon_x = hexagon.get_x() + x_dif
+        if hexagon_0_y % 2 != grid_y % 2 != hexagon_y % 2:
+            hexagon_x += 1 if hexagon_y % 2 == 0 else -1
+        hexagon.set_coordinates(hexagon_x, hexagon_y)
 
 
 def solve(init_rows):

@@ -7,8 +7,6 @@ class Tile(object):
     def __init__(self, pos_x: float, pos_y: float, hexagons: list[Hexagon]):
         """
         Initialize the Tile with position and hexagons.
-
-        Parameters:
         :param pos_x: The x-coordinate of the tile position, respecting the first hexagon.
         :param pos_y: The y-coordinate of the tile position, respecting the first hexagon.
         :param hexagons: The list of hexagons of the tile.
