@@ -5,45 +5,7 @@ import numpy as np
 
 from model.hexagon import Hexagon
 from model.tile import Tile
-
-
-def get_neighbour_coordinates(x: int, y: int, n: int):
-    """
-    Calculates the coordinates of a neighboring cell in a hexagonal grid.
-
-    :param x: Current x-coordinate.
-    :param y: Current y-coordinate.
-    :param n: Neighbor index (0 to 5 inclusive).
-
-    :return: Coordinates of the neighboring cell as a tuple (int, int).
-
-    :raises AssertionError: If the neighbor index is not in the range [0, 5].
-    """
-    assert 0 <= n <= 5, "The index of the neighbours has to be between 0 and 5"
-
-    even_row_neighbors = {
-        0: (x - 1, y - 1),
-        1: (x, y - 1),
-        2: (x + 1, y),
-        3: (x, y + 1),
-        4: (x - 1, y + 1),
-        5: (x - 1, y)
-    }
-
-    odd_row_neighbors = {
-        0: (x, y - 1),
-        1: (x + 1, y - 1),
-        2: (x + 1, y),
-        3: (x + 1, y + 1),
-        4: (x, y + 1),
-        5: (x - 1, y)
-    }
-
-    if y % 2 == 0:
-        return even_row_neighbors[n]
-    else:
-        return odd_row_neighbors[n]
-
+from utils.math_utils import get_neighbour_coordinates
 
 class HexagonalMap(object):
 
@@ -108,9 +70,9 @@ class HexagonalMap(object):
     def __connect_islands(self) -> None:
         def set_value_to_island(map, x, y, value):
             map[x][y] = (1, value, 0)
-            for x, y in [get_neighbour_coordinates(x, y, k) for k in [0, 1, 2, 3, 4, 5]]:
-                if map[x][y] == 1:
-                    set_value_to_island(map, x, y, value)
+            for x_n, y_n in [get_neighbour_coordinates(x, y, k) for k in [0, 1, 2, 3, 4, 5]]:
+                if map[x_n][y_n] == 1:
+                    set_value_to_island(map, x_n, y_n, value)
 
         tmp_map = deepcopy(self._map)
 
