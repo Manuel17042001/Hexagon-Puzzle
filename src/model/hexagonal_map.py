@@ -106,50 +106,98 @@ class HexagonalMap(object):
         self.__connect_islands()
 
     def __connect_islands(self) -> None:
-        # FIXME change code if islands are more than one hexagon away
         def set_value_to_island(map, x, y, value):
-            map[x][y] = value
+            map[x][y] = (1, value, 0)
             for x, y in [get_neighbour_coordinates(x, y, k) for k in [0, 1, 2, 3, 4, 5]]:
                 if map[x][y] == 1:
                     set_value_to_island(map, x, y, value)
 
-        # take a copy of the map
-        map_tmp = deepcopy(self._map)
+        tmp_map = deepcopy(self._map)
 
-        n_island = 2
+        num_island = 1
 
         # set the hexagons from one island to the same value
         for i in range(self.__width):
             for j in range(self.__height):
-                if map_tmp[i][j] == 1:
-                    set_value_to_island(map_tmp, i, j, n_island)
-                    n_island += 1
+                if tmp_map[i][j] == 1:
+                    set_value_to_island(tmp_map, i, j, num_island)
+                    num_island += 1
 
-        # set the water-hexagons to the value of the different neighbour island count
+        all_calculated = False
+        while not all_calculated:
+            all_calculated = True
+            for i in range(1, self.__width - 1):
+                for j in range(1, self.__height - 1):
+                    if tmp_map[i][j] == 0:
+                        for x, y in [get_neighbour_coordinates(i, j, k) for k in [0, 1, 2, 3, 4, 5]]:
+                            if 0 < x < self.__width - 1 and 0 < y < self.__height - 1:
+                                tmp_map_xy = tmp_map[x][y]
+                                if isinstance(tmp_map_xy, tuple):
+                                    if isinstance(tmp_map[i][j], tuple):
+                                        if tmp_map[i][j][2] < tmp_map_xy[2] + 1:
+                                            continue
+                                        else:
+                                            tmp_map[i][j] = (0, tmp_map_xy[1], tmp_map_xy[2] + 1)
+                                    else:
+                                        tmp_map[i][j] = (0, tmp_map_xy[1], tmp_map_xy[2] + 1)
+                                    all_calculated = False
+
+        borders = []
+
+        for i in range(num_island):
+            borders.append([])
+            for _ in range(num_island - i):
+                borders[-1].append([])
+
         for i in range(1, self.__width - 1):
             for j in range(1, self.__height - 1):
-                set_islands = []
-                if map_tmp[i][j] == 0:
-                    for x, y in [get_neighbour_coordinates(i, j, k) for k in [0, 1, 2, 3, 4, 5]]:
-                        if map_tmp[x][y] > 0:
-                            if not set_islands.__contains__(map_tmp[x][y]):
-                                set_islands.append(map_tmp[x][y])
-                    map_tmp[i][j] = -len(set_islands)
+                for x, y in [get_neighbour_coordinates(i, j, k) for k in [0, 1, 2]]:
+                    if 0 < x < self.__width - 1 and 0 < y < self.__height - 1:
+                        i_hexagon = tmp_map[i][j][1]
+                        i_neighbour = tmp_map[x][y][1]
+                        if i_hexagon != i_neighbour:
+                            borders[min(i_hexagon, i_neighbour) - 1][max(i_hexagon, i_neighbour) - 1].append(
+                                ((i, j, tmp_map[i][j][2]), (x, y, tmp_map[x][y][2])))
 
-        # select the hexagons with the most neighbour island
-        max_tiles = []
-        max_value = -2
-        for i in range(1, self.__width - 1):
-            for j in range(1, self.__height - 1):
-                if map_tmp[i][j] == max_value:
-                    max_tiles.append((i, j))
-                    max_tiles = [(i, j)]
+        nearest_borders = []
+        for row in borders:
+            for list in row:
+                if list:
+                    nearest_borders.append([])
+                    min_i = self.__width * self.__height
+                    for border in list:
+                        b1 = border[0][2]
+                        b2 = border[1][2]
+                        if min_i > b1 + b2:
+                            nearest_borders[-1] = []
+                            min_i = b1 + b2
+                        elif min_i < b1 + b2:
+                            continue
+                        nearest_borders[-1].append(border)
 
-        # select randomly one of the hexagons with the most neighbours and set it to 1
-        if len(max_tiles):
-            x, y = random.choice(max_tiles)
-            self._map[x][y] = 1
-            self.__connect_islands()
+        def connect_to_island(map, x, y):
+            color, island, distance = map[x][y]
+            if color == 0 and distance > 0:
+                map[x][y] = (1, map[x][y][1], map[x][y][2])
+                list_hex = []
+                for i, j in [get_neighbour_coordinates(x, y, k) for k in [0, 1, 2, 3, 4, 5]]:
+                    if 0 < i < self.__width - 1 and 0 < j < self.__height - 1:
+                        neighbour = map[i][j]
+                        if neighbour[1] == island and neighbour[2] == distance - 1:
+                            list_hex.append((x, y))
+                choice = list_hex[random.randint(0, len(list_hex) - 1)]
+                connect_to_island(map, choice[0], choice[1])
+
+        for borders in nearest_borders:
+            border_choice = borders[random.randint(0, len(borders) - 1)]
+            for hexagon in border_choice:
+                x, y = hexagon[0], hexagon[1]
+                connect_to_island(tmp_map, x, y)
+
+        new_map = [[tmp_map[i][j][0] if 0 < j < self.__height - 1 and 0 < i < self.__width - 1 else 0 for j in
+                    range(self.__height)] for i in range(self.__width)]
+
+        self._map = new_map
 
     def generate_tile(self, x: int, y: int, count: int, tile_n: int) -> int:
         if self.__puzzle_map[x][y] == 0:
