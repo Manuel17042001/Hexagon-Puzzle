@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from model.game import Game
+from model.game_manager import GameManager
 from model.screen_data import ScreenData
 from screens import play_screen, overview_screen
 from utils import resource_holder
@@ -21,7 +21,10 @@ screen = ScreenData(window)
 
 clock = pygame.time.Clock()
 
-game = Game(4, 5)
+game_manger = GameManager()
+game_manger.create_new_game(4, 5)
+#game_manger.load_game()
+game = game_manger.get_game()
 resource_holder.update_screen_data(screen, game)
 
 while running:
@@ -35,7 +38,7 @@ while running:
         if screen.get_screen_index() == 0:
             overview_screen.update(screen)
         else:
-            play_screen.update(screen, game)
+            play_screen.update(screen)
 
     pygame.display.flip()
 
