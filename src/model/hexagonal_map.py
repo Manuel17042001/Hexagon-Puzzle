@@ -4,8 +4,10 @@ from copy import deepcopy
 import numpy as np
 
 from model.hexagon import Hexagon
+from model.screen_data import ScreenData
 from model.tile import Tile
 from utils.math_utils import get_neighbour_coordinates
+
 
 class HexagonalMap(object):
 
@@ -187,7 +189,11 @@ class HexagonalMap(object):
                     self.generate_tile(i, j, random.choice(range(2, 7)), tile_n)
                     tile_n += 1
 
-        tiles = [Tile(900, 200, []) for _ in range(np.max(self.__puzzle_map))]
+        window_width, window_height = ScreenData().get_window().get_size()
+
+        tiles = [
+            Tile(window_width * 3 / 4, window_height * 3 / 8, [])
+            for _ in range(np.max(self.__puzzle_map))]
 
         for x in range(1, self.__width - 1):
             for y in range(1, self.__height - 1):
