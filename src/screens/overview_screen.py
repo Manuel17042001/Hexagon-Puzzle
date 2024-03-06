@@ -34,28 +34,28 @@ def draw_background(window: pygame.Surface):
     background_image = pygame.transform.scale(background_image, (width, height))
     window.blit(background_image, (0, 0))
 
+    hover_effect = math.sin(system_utils.time_in_millis() / 500) * 50
+
     hexagon_image = resource_holder.image_hexagon_start_screen
     hexagon_image = pygame.transform.scale(hexagon_image, (height * 0.7, height * .7))
     window.blit(hexagon_image, (width - hexagon_image.get_width() / 4 * 2.5,
-                                -hexagon_image.get_height() * .1 + math.sin(system_utils.time_in_millis() / 250) * 20))
+                                -hexagon_image.get_height() * .1 + hover_effect))
 
     hexagon_image = pygame.transform.scale(hexagon_image, (height * .5, height * .5))
     hexagon_image2 = hexagon_image
-    window.blit(hexagon_image2, (-hexagon_image.get_width() * .2,
-                                 -hexagon_image.get_height() * .1 + math.sin(system_utils.time_in_millis() / 250) * 15))
 
     hexagon_image = pygame.transform.scale(hexagon_image, (height * .25, height * .25))
     window.blit(hexagon_image, (
         hexagon_image.get_width() * 0.8,
-        hexagon_image.get_height() + math.sin(system_utils.time_in_millis() / 250) * 3.))
+        hexagon_image.get_height() * 1.7 + hover_effect * .5 * .25))
 
     window.blit(hexagon_image2, (-hexagon_image.get_width() * .2,
-                                 -hexagon_image.get_height() * .1 + math.sin(system_utils.time_in_millis() / 250) * 15))
+                                 -hexagon_image.get_height() * .1 + hover_effect * .5))
 
     hexagon_image = pygame.transform.scale(hexagon_image, (height * .15, height * .15))
     window.blit(hexagon_image,
                 (width / 4 * 2.5,
-                 height - hexagon_image.get_height() * 2 + math.sin(system_utils.time_in_millis() / 250) * 1.))
+                 height - hexagon_image.get_height() * 2 + hover_effect * .5 * .25 * .15))
 
 
 def draw_title(window: pygame.Surface, font_path: str):
