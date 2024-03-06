@@ -1,7 +1,6 @@
 import pygame
 
 import utils.draw_utils as draw_utils
-from model.game import Game
 from utils.math_utils import sin60
 
 __side_length = 10
@@ -66,7 +65,6 @@ def update_screen_data(screen, grid_size):
     image_icon_exit = pygame.transform.scale(image_icon_exit_unscaled, (icon_scale, icon_scale))
     image_icon_hint = pygame.transform.scale(image_icon_hint_unscaled, (icon_scale, icon_scale))
 
-
     __update_grid_image(screen, grid_size)
 
 
@@ -89,7 +87,7 @@ def __update_grid_image(screen, grid_size):
     for y in range(n_y):
         for x in range(n_x):
             if grid_x_start <= x < grid_x_start + grid_width and grid_y_start <= y < grid_y_start + grid_height:
-                 draw_utils.draw_hexagon_outline(grid_image,
+                draw_utils.draw_hexagon_outline(grid_image,
                                                 ((2 * x + y % 2) * __side_length * sin60, y * __side_length * 1.5),
                                                 __side_length, (60, 60, 82), 2)
             else:

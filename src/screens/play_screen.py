@@ -50,7 +50,8 @@ def update() -> None:
         window = screen_data.get_window()
         width, height = window.get_size()
         txt_width, txt_height = text_no_solution.get_size()
-        draw_stretched_hexagon(window, (width / 4 - txt_width / 2, height / 4 * 2.5 + txt_height / 2),
+        draw_stretched_hexagon(window, (
+        width / 4 - txt_width / 2 + text_no_solution.get_width() / 2, height / 4 * 2.5 + txt_height / 2),
                                int(font_size / 3), txt_width, (255, 255, 255, 150), (255, 255, 255), 3)
         window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
 
