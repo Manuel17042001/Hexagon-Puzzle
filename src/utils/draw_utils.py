@@ -60,4 +60,4 @@ def draw_stretched_hexagon(surface: pygame.Surface, center: tuple[float, float],
     pygame.draw.lines(stretched_hexagon, line_color, True, points, line_thickness)
 
     # Draw the stretched hexagon on the surface
-    surface.blit(stretched_hexagon, (center[0] - side_length, center[1] - side_length))
+    surface.blit(stretched_hexagon, (center[0] - side_length - horizontal_line_length / 2, center[1] - side_length))

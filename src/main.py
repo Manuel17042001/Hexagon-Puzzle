@@ -17,15 +17,10 @@ pygame.display.set_icon(resource_holder.image_icon)
 
 running = True
 
-screen = ScreenData(window)
+screen = ScreenData()
+screen.initialize(window)
 
 clock = pygame.time.Clock()
-
-game_manger = GameManager()
-game_manger.create_new_game(4, 5)
-#game_manger.load_game()
-game = game_manger.get_game()
-resource_holder.update_screen_data(screen, game)
 
 while running:
     for event in pygame.event.get():
@@ -33,12 +28,13 @@ while running:
             running = False
         elif event.type == pygame.VIDEORESIZE:
             window_width, window_height = event.size
-            resource_holder.update_screen_data(screen, game)
+            if GameManager().get_game():
+                resource_holder.update_screen_data(ScreenData(), GameManager().get_game().get_map().get_grid_size())
 
-        if screen.get_screen_index() == 0:
-            overview_screen.update(screen)
-        else:
-            play_screen.update(screen)
+    if screen.get_screen_index() == 0:
+        overview_screen.update()
+    else:
+        play_screen.update()
 
     pygame.display.flip()
 

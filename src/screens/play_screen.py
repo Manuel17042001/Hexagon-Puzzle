@@ -23,13 +23,15 @@ last_no_solution_time = None
 game = GameManager().get_game()
 
 
-def update(screen_data: ScreenData) -> None:
+def update() -> None:
     """
     This function is used to update the play screen based on the user input
     :param screen_data: the screen on witch it should be updated
     """
     global game
     game = GameManager().get_game()
+
+    screen_data = ScreenData()
 
     draw_layout(screen_data)
 
@@ -54,8 +56,8 @@ def update(screen_data: ScreenData) -> None:
 
 
 def draw_layout(screen_data: ScreenData) -> None:
-    window = screen_data.get_window()
-    grid_width, grid_height = game.get_map().get_grid_size()
+    window = ScreenData().get_window()
+    grid_width, grid_height = GameManager().get_game().get_map().get_grid_size()
     window_width, window_height = window.get_width(), window.get_height()
 
     window.fill(screen_data.get_background_color())

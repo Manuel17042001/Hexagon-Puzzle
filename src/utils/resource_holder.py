@@ -2,7 +2,6 @@ import pygame
 
 import utils.draw_utils as draw_utils
 from model.game import Game
-from model.screen_data import ScreenData
 from utils.math_utils import sin60
 
 __side_length = 10
@@ -39,7 +38,7 @@ image_icon_hint = image_icon_hint_unscaled
 grid_image = pygame.Surface((0, 0), pygame.SRCALPHA)
 
 
-def update_screen_data(screen: ScreenData, game: Game):
+def update_screen_data(screen, grid_size):
     global __side_length
     global image_hexagon_blue
     global image_hexagon_orange
@@ -67,14 +66,15 @@ def update_screen_data(screen: ScreenData, game: Game):
     image_icon_exit = pygame.transform.scale(image_icon_exit_unscaled, (icon_scale, icon_scale))
     image_icon_hint = pygame.transform.scale(image_icon_hint_unscaled, (icon_scale, icon_scale))
 
-    __update_grid_image(screen, game)
+
+    __update_grid_image(screen, grid_size)
 
 
-def __update_grid_image(screen: ScreenData, game: Game):
+def __update_grid_image(screen, grid_size):
     global grid_image
     window = screen.get_window()
+    grid_width, grid_height = grid_size
     window_width, window_height = window.get_width(), window.get_height()
-    grid_width, grid_height = game.get_map().get_grid_size()
     grid_image = pygame.Surface((window_width, window_height), pygame.SRCALPHA)
 
     n_x = int((window_width / 2) / 2 / sin60 / __side_length - 1 / 2 + 2)
