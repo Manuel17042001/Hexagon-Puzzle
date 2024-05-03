@@ -159,8 +159,6 @@ def solve(init_rows, row_tile, game):
             if is_true(m[rows[row]]):
                 solutions[-1].append(init_rows[row])
 
-        print(solutions[-1])
-
         if is_solution_correctly(solutions[-1], game):
             return solutions[-1]
 
