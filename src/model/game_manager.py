@@ -36,3 +36,8 @@ class GameManager:
 
     def exists_saved_game(self) -> bool:
         return os.path.exists(self.__save_game_file)
+
+    def delete_saved_game(self) -> None:
+        self._game = None
+        if self.exists_saved_game():
+            os.remove(self.__save_game_file)

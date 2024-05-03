@@ -1,9 +1,10 @@
 import copy
 from copy import copy as cpy
 
-from z3 import Solver, Bool, AtMost, AtLeast, sat, is_true
+from z3 import Solver, Bool, AtMost, AtLeast, sat, is_true, Or, Z3Exception, Z3_UNINTERPRETED_SORT, is_array
 
 from model.tile import Tile
+from utils.math_utils import get_neighbour_coordinates
 
 
 def find_all_placements(width, height, tile, i, game):
@@ -24,7 +25,7 @@ def find_all_placements(width, height, tile, i, game):
                     if can_be_placed(width, height, tmp_rotated_tile, game):
                         list_pos_hexagons = []
                         for hexagon in tmp_rotated_tile.get_hexagons():
-                            list_pos_hexagons.append(hexagon.get_coordinates())
+                            list_pos_hexagons.append((hexagon.get_coordinates(), hexagon.get_color()))
                         placement_list.append((i, list_pos_hexagons))
     distinct_list = deep_distinct(placement_list)
     return distinct_list
@@ -72,7 +73,39 @@ def place_tile_at_position(grid_x: int, grid_y: int, tile: Tile) -> None:
         hexagon.set_coordinates(hexagon_x, hexagon_y)
 
 
-def solve(init_rows):
+def is_solution_correctly(solution, game) -> bool:
+    def set_value_to_island(map, x, y, value):
+        map[x][y] = value
+        for y_n, x_n in [get_neighbour_coordinates(y, x, k) for k in [0, 1, 2, 3, 4, 5]]:
+            if map[x_n][y_n] == 1:
+                set_value_to_island(map, x_n, y_n, value)
+
+    width, height = game.get_map().get_grid_size()
+    width, height = width + 2, height + 2
+    solution_map = copy.deepcopy(game.get_map().get_actual_map())
+    for tiles in solution:
+        for hexagon in tiles[1]:
+            coord, color = hexagon
+            x, y = coord
+            solution_map[y][x] = color
+
+    num_islands = 1
+
+    for j in range(1, width - 1):
+        for i in range(1, height - 1):
+            if solution_map[i][j] is None:
+                return False
+            elif solution_map[i][j] == 0:
+                continue
+            elif solution_map[i][j] == 1 and num_islands == 1:
+                set_value_to_island(solution_map, i, j, 0)
+                num_islands += 1
+            else:
+                return False
+    return True
+
+
+def solve(init_rows, row_tile, game):
     s = Solver()
 
     rows = [Bool('row_%d' % r) for r in range(len(init_rows))]
@@ -87,7 +120,7 @@ def solve(init_rows):
             inv_tbl_poly[tile_index] = []
         inv_tbl_poly[tile_index].append(cur_row)
         for hexagon_coordinates in hexagons_coordinates:
-            coord = hexagon_coordinates
+            coord, color = hexagon_coordinates
             if coord not in inv_tbl_board:
                 inv_tbl_board[coord] = []
             inv_tbl_board[coord].append(cur_row)
@@ -115,13 +148,42 @@ def solve(init_rows):
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
-    if s.check() == sat:
+    results = []
+    solutions = []
+
+    while s.check() == sat:
         m = s.model()
-        solution = []
+        results.append(m)
+        solutions.append([])
         for row in range(len(init_rows)):
             if is_true(m[rows[row]]):
-                solution.append(init_rows[row])
+                solutions[-1].append(init_rows[row])
 
-        return solution
-    else:
-        return None
+        print(solutions[-1])
+
+        if is_solution_correctly(solutions[-1], game):
+            return solutions[-1]
+
+        block = []
+        for d in m:
+            # d is a declaration
+            if d.arity() > 1:
+                raise Z3Exception("uninterpreted functions are not supported")
+            # create a constant from declaration
+            c = d()
+            if is_array(c) or c.sort().kind() == Z3_UNINTERPRETED_SORT:
+                raise Z3Exception("arrays and uninterpreted sorts are not supported")
+            block.append(c != m[d])
+        s.add(Or(block))
+
+    return None
+
+    # if s.check() == sat:
+    #     m = s.model()
+    #     solution = []
+    #     for row in range(len(init_rows)):
+    #         if is_true(m[rows[row]]):
+    #             solution.append(init_rows[row])
+    #     return solution
+    # else:
+    #     return None

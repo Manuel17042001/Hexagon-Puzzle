@@ -20,7 +20,7 @@ class Game:
         init_rows = []
         for i in range(len(row_tile)):
             init_rows = init_rows + my_solver.find_all_placements(grid_width, grid_height, row_tile[i], i, game)
-        solution = my_solver.solve(init_rows)
+        solution = my_solver.solve(init_rows, row_tile, game)
         if solution is None or solution == []:
             return None
         index = int(random.random() * len(solution))

@@ -8,7 +8,7 @@ from model.game_manager import GameManager
 from model.screen_data import ScreenData
 from model.tile import Tile
 from utils import draw_utils, resource_holder, system_utils
-from utils.draw_utils import draw_stretched_hexagon
+from utils.draw_utils import draw_stretched_hexagon, draw_hexagonal_gird_background
 from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
@@ -21,6 +21,7 @@ mouse_pressed: bool = False
 hexagons_hint: list[(int, int)] = []
 last_no_solution_time = None
 game = GameManager().get_game()
+solved = False
 
 
 def update() -> None:
@@ -28,18 +29,25 @@ def update() -> None:
     This function is used to update the play screen based on the user input
     :param screen_data: the screen on witch it should be updated
     """
-    global game
+    global game, solved
     game = GameManager().get_game()
 
     screen_data = ScreenData()
 
     draw_layout(screen_data)
 
-    update_mouse_movement(screen_data)
+    if not solved:
+        update_mouse_movement(screen_data)
 
     draw_tiles(screen_data)
 
     draw_hint(screen_data)
+
+    if solved:
+        draw_solved_overlay(screen_data)
+        return
+    elif game.get_map().is_puzzle_correctly():
+        solved = True
 
     global last_no_solution_time
     if last_no_solution_time is not None and last_no_solution_time + 1000 > system_utils.time_in_millis():
@@ -51,9 +59,50 @@ def update() -> None:
         width, height = window.get_size()
         txt_width, txt_height = text_no_solution.get_size()
         draw_stretched_hexagon(window, (
-        width / 4 - txt_width / 2 + text_no_solution.get_width() / 2, height / 4 * 2.5 + txt_height / 2),
+            width / 4 - txt_width / 2 + text_no_solution.get_width() / 2, height / 4 * 2.5 + txt_height / 2),
                                int(font_size / 3), txt_width, (255, 255, 255, 150), (255, 255, 255), 3)
         window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
+
+
+def draw_solved_overlay(screen_data: ScreenData) -> None:
+    window = screen_data.get_window()
+    width, height = window.get_size()
+    draw_hexagonal_gird_background(window, (width / 2, height / 2), width, height,
+                                   (0, 0, 0, 150),
+                                   (0, 0, 0), 1)
+    draw_hexagonal_gird_background(window, (width / 2, height / 2), width / 5 * 3, height / 5 * 3,
+                                   (20, 20, 31, 200),
+                                   (255, 255, 255), 3)
+
+    font_size = int(height * 0.12)
+    font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+    font_title = pygame.font.Font(font_path, font_size)
+    font_subtitle = pygame.font.Font(font_path, int(font_size * 0.45))
+    text_hexagon_puzzle = font_subtitle.render("Hexagon Puzzle", True, (255, 255, 255))
+    text_solved = font_title.render("Solved!", True, (255, 255, 255))
+    txt_hp_w, txt_hp_h = text_hexagon_puzzle.get_size()
+    window.blit(text_hexagon_puzzle, (width / 2 - txt_hp_w / 2, height / 4))
+    txt_s_w, txt_s_h = text_solved.get_size()
+    window.blit(text_solved, (width / 2 - txt_s_w / 2, height / 4 + txt_hp_h / 2))
+    font_button = pygame.font.Font(font_path, int(font_size * 0.4))
+    text_no_solution = font_button.render("Home", True, (255, 255, 255))
+    window = screen_data.get_window()
+    width, height = window.get_size()
+    txt_width, txt_height = text_no_solution.get_size()
+    draw_stretched_hexagon(window, (width / 2, height * 3 / 5),
+                           int(font_size / 3), txt_width, (255, 255, 255, 150), (255, 255, 255), 3)
+    window.blit(text_no_solution, (width / 2 - txt_width / 2, height * 3 / 5 - txt_height / 2))
+
+    mouse_buttons = pygame.mouse.get_pressed()
+    mouse_pos = pygame.mouse.get_pos()
+    if mouse_buttons[0] == 1:
+        if (width / 2 - txt_width / 2 < mouse_pos[0] < width / 2 + txt_width / 2 and
+                height * 3 / 5 - txt_height / 2 < mouse_pos[1] < height * 3 / 5 + txt_height / 2):
+            GameManager().delete_saved_game()
+            global hexagons_hint, solved
+            solved = False
+            hexagons_hint = []
+            screen_data.set_screen_index(0)
 
 
 def draw_layout(screen_data: ScreenData) -> None:
@@ -296,6 +345,7 @@ def update_mouse_movement(screen_data):
         mouse_pressed = False
         if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() and mouse_pos[
             1] < window_height / 15:
+            hexagons_hint = []
             GameManager().save_game()
             screen_data.set_screen_index(0)
         elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2 and mouse_pos[
@@ -363,12 +413,14 @@ def draw_hint(screen_data):
     t_y = grid_y_start * sl * 1.5
     global hexagons_hint
     for hexagon in hexagons_hint:
-        h_x, h_y = hexagon
+        coord, _ = hexagon
+        h_x, h_y = coord
         for i in range(6):
             n_x, n_y = hexagonal_map.get_neighbour_coordinates(h_x, h_y, i)
             b = False
             for hexagon1 in hexagons_hint:
-                xx, yy = hexagon1
+                coord1, _ = hexagon1
+                xx, yy = coord1
                 if n_x == xx and n_y == yy:
                     b = True
                     break

@@ -61,3 +61,17 @@ def draw_stretched_hexagon(surface: pygame.Surface, center: tuple[float, float],
 
     # Draw the stretched hexagon on the surface
     surface.blit(stretched_hexagon, (center[0] - side_length - horizontal_line_length / 2, center[1] - side_length))
+
+
+def draw_hexagonal_gird_background(surface: pygame.Surface, center: tuple[float, float], width: int, height: int,
+                                   background_color: tuple[int, int, int, int],
+                                   line_color: tuple[int, int, int],
+                                   line_thickness: int) -> None:
+    # TODO make better
+    transparent_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    pygame.draw.rect(transparent_surface, background_color,
+                     pygame.Rect(0, 0, width, height))
+    pygame.draw.rect(transparent_surface, line_color,
+                     pygame.Rect(0, 0, width, height), line_thickness)
+
+    surface.blit(transparent_surface, (center[0] - width / 2, center[1] - height / 2, width, height))

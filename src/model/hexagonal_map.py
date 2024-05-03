@@ -216,3 +216,27 @@ class HexagonalMap(object):
                     tile.rotate(True)
 
         return tiles
+
+    def is_puzzle_correctly(self):
+        def set_value_to_island(map, x, y, value):
+            map[x][y] = value
+            for y_n, x_n in [get_neighbour_coordinates(y, x, k) for k in [0, 1, 2, 3, 4, 5]]:
+                if map[x_n][y_n] == 1:
+                    set_value_to_island(map, x_n, y_n, value)
+
+        num_islands = 1
+
+        tmp_map = deepcopy(self.__actual_map)
+
+        for i in range(1, self.__height - 1):
+            for j in range(1, self.__width - 1):
+                if tmp_map[i][j] is None:
+                    return False
+                elif tmp_map[i][j] == 0:
+                    continue
+                elif tmp_map[i][j] == 1 and num_islands == 1:
+                    set_value_to_island(tmp_map, i, j, 0)
+                    num_islands += 1
+                else:
+                    return False
+        return True
