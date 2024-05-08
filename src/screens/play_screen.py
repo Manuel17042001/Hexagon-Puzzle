@@ -8,7 +8,7 @@ from model.game_manager import GameManager
 from model.screen_data import ScreenData
 from model.tile import Tile
 from utils import draw_utils, resource_holder, system_utils
-from utils.draw_utils import draw_stretched_hexagon, draw_hexagonal_gird_background
+from utils.draw_utils import draw_stretched_hexagon, draw_hexagonal_gird_background, draw_hexagon_image
 from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
@@ -19,6 +19,7 @@ start_grid_x, start_grid_y = 0, 0
 mouse_pressed: bool = False
 
 hexagons_hint: list[(int, int)] = []
+colored_hint = False
 last_no_solution_time = None
 game = GameManager().get_game()
 solved = False
@@ -138,6 +139,9 @@ def draw_layout(screen_data: ScreenData) -> None:
     window.blit(resource_holder.image_icon_exit, (window_width - resource_holder.image_icon_exit.get_width(), 0))
     window.blit(resource_holder.image_icon_hint, (
         window_width - resource_holder.image_icon_exit.get_width() - resource_holder.image_icon_hint.get_width(), 0))
+    window.blit(resource_holder.image_icon_colored_hint, (
+        window_width - resource_holder.image_icon_exit.get_width() - resource_holder.image_icon_hint.get_width() - resource_holder.image_icon_colored_hint.get_width(),
+        0))
 
     image_size = resource_holder.image_flip_vertical.get_size()
 
@@ -336,6 +340,7 @@ def update_mouse_movement(screen_data):
     global is_picked_up
     global mouse_pressed
     global hexagons_hint
+    global colored_hint
     global last_no_solution_time
 
     if mouse_buttons[0] == 1:
@@ -348,8 +353,12 @@ def update_mouse_movement(screen_data):
             hexagons_hint = []
             GameManager().save_game()
             screen_data.set_screen_index(0)
-        elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2 and mouse_pos[
+        elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 3 and mouse_pos[
             1] < window_height / 15:
+            if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2:
+                colored_hint = False
+            else:
+                colored_hint = True
             hint = game.get_hint(game)
             if hint is not None:
                 hexagons_hint = game.get_hint(game)[1]
@@ -407,14 +416,23 @@ def draw_hint(screen_data):
     n_x = int((window_width / 2) / 2 / sin60 / sl - 1 / 2 + 2)
     n_y = int(((window_height / 4 * 3) / sl - 1 / 2) * 2 / 3 + 2)
 
+    # TODO find Error in grid_start_position
     grid_x_start = int((n_x - grid_width) / 2) - 1 - 1
-    grid_y_start = int((n_y - grid_height) / 2) - 2
+    grid_y_start = int((n_y - grid_height) / 2) - 2 + 1 - int((grid_height + 1) / 2) % 2
     t_x = (2 * grid_x_start + grid_y_start % 2) * sl * sin60
     t_y = grid_y_start * sl * 1.5
     global hexagons_hint
+    global colored_hint
     for hexagon in hexagons_hint:
-        coord, _ = hexagon
+        coord, color = hexagon
         h_x, h_y = coord
+        if colored_hint:
+            x = t_x + (2 * h_x + h_y % 2) * sl * sin60
+            y = t_y + h_y * sl * 1.5
+            image = copy.copy(
+                resource_holder.image_hexagon_orange if color == 1 else resource_holder.image_hexagon_blue)
+            image.set_alpha(100)
+            draw_hexagon_image(window, (x, y), sl, image)
         for i in range(6):
             n_x, n_y = hexagonal_map.get_neighbour_coordinates(h_x, h_y, i)
             b = False

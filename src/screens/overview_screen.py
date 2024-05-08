@@ -144,7 +144,7 @@ def start_game():
 
 
 def start_new_game():
-    GameManager().create_new_game(4, 5)
+    GameManager().create_new_game(5, 4)
     ScreenData().set_screen_index(1)
 
 

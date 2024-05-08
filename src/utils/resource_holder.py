@@ -33,6 +33,8 @@ image_icon_exit = image_icon_exit_unscaled
 # Todo replace images
 image_icon_hint_unscaled = pygame.image.load("./resources/hint_icon.png")
 image_icon_hint = image_icon_hint_unscaled
+image_icon_colored_hint_unscaled = pygame.image.load("./resources/colored_hint_icon.png")
+image_icon_colored_hint = image_icon_colored_hint_unscaled
 
 grid_image = pygame.Surface((0, 0), pygame.SRCALPHA)
 
@@ -47,6 +49,7 @@ def update_screen_data(screen, grid_size):
     global image_flip_vertical
     global image_icon_exit
     global image_icon_hint
+    global image_icon_colored_hint
 
     window = screen.get_window()
 
@@ -64,6 +67,7 @@ def update_screen_data(screen, grid_size):
     icon_scale = window.get_height() / 15
     image_icon_exit = pygame.transform.scale(image_icon_exit_unscaled, (icon_scale, icon_scale))
     image_icon_hint = pygame.transform.scale(image_icon_hint_unscaled, (icon_scale, icon_scale))
+    image_icon_colored_hint = pygame.transform.scale(image_icon_colored_hint_unscaled, (icon_scale, icon_scale))
 
     __update_grid_image(screen, grid_size)
 
