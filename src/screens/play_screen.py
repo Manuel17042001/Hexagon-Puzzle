@@ -1,9 +1,13 @@
 import copy
 import math
+import queue
+import threading
+import time
 
 import pygame
 
 from model import hexagonal_map
+from model.game import Game
 from model.game_manager import GameManager
 from model.screen_data import ScreenData
 from model.tile import Tile
@@ -23,6 +27,7 @@ colored_hint = False
 last_no_solution_time = None
 game = GameManager().get_game()
 solved = False
+loading_flag = False
 
 
 def update() -> None:
@@ -36,9 +41,6 @@ def update() -> None:
     screen_data = ScreenData()
 
     draw_layout(screen_data)
-
-    if not solved:
-        update_mouse_movement(screen_data)
 
     draw_tiles(screen_data)
 
@@ -63,6 +65,9 @@ def update() -> None:
             width / 4 - txt_width / 2 + text_no_solution.get_width() / 2, height / 4 * 2.5 + txt_height / 2),
                                int(font_size / 3), txt_width, (255, 255, 255, 150), (255, 255, 255), 3)
         window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
+
+    if not solved:
+        update_mouse_movement(screen_data)
 
 
 def draw_solved_overlay(screen_data: ScreenData) -> None:
@@ -355,11 +360,17 @@ def update_mouse_movement(screen_data):
             screen_data.set_screen_index(0)
         elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 3 and mouse_pos[
             1] < window_height / 15:
-            if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2:
-                colored_hint = False
-            else:
-                colored_hint = True
-            hint = game.get_hint(game)
+            colored_hint = not mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 2
+            global loading_flag
+            loading_flag = True
+            result = queue.Queue()
+            loading_thread = threading.Thread(target=show_loading_screen, args=(screen_data,))
+            hint_thread = threading.Thread(target=get_hint, args=(game, result))
+            loading_thread.start()
+            hint_thread.start()
+            hint_thread.join()
+            loading_flag = False
+            hint = result.get()
             if hint is not None:
                 hexagons_hint = game.get_hint(game)[1]
             else:
@@ -374,6 +385,43 @@ def update_mouse_movement(screen_data):
 
     if is_picked_up:
         update_picked_tile_pos(mouse_pos)
+
+
+def show_loading_screen(screen_data):
+    global loading_flag
+    n_dots = 0
+    time.sleep(0.5)
+    while loading_flag:
+        window = screen_data.get_window()
+        width, height = window.get_size()
+
+        l_width, l_height = width / 6 * 2, height / 7
+
+        rect = pygame.Rect(width / 2 - l_width / 2, height / 2 - l_height / 2, l_width, l_height)
+        draw_hexagonal_gird_background(window, (width / 2, height / 2), rect.width, rect.height,
+                                       (20, 20, 31, 255),
+                                       (255, 255, 255), 3)
+
+        max_dots = 3
+        text = "Loading"
+
+        font_size = int(height * 0.06)
+        font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+        font_title = pygame.font.Font(font_path, font_size)
+        text_ref = font_title.render(text + "." * max_dots, True, (255, 255, 255))
+        for _ in range(n_dots % (max_dots + 1)):
+            text += "."
+        n_dots += 1
+        text_load = font_title.render(text, True, (255, 255, 255))
+        txt_s_w, txt_s_h = text_ref.get_size()
+        window.blit(text_load, (width / 2 - txt_s_w / 2, height / 2 - txt_s_h / 2))
+        pygame.display.update(rect)
+        time.sleep(0.5)
+
+
+def get_hint(game: Game, result):
+    hint = game.get_hint(game)
+    result.put(hint)
 
 
 def draw_tiles(screen_data):

@@ -176,12 +176,3 @@ def solve(init_rows, row_tile, game):
 
     return None
 
-    # if s.check() == sat:
-    #     m = s.model()
-    #     solution = []
-    #     for row in range(len(init_rows)):
-    #         if is_true(m[rows[row]]):
-    #             solution.append(init_rows[row])
-    #     return solution
-    # else:
-    #     return None
