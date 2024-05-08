@@ -4,7 +4,7 @@ import pygame
 
 from model.game_manager import GameManager
 from model.screen_data import ScreenData
-from screens import play_screen, overview_screen
+from screens import play_screen, overview_screen, create_game_screen
 from utils import resource_holder
 
 pygame.init()
@@ -33,8 +33,12 @@ while running:
 
     if screen.get_screen_index() == 0:
         overview_screen.update()
-    else:
+    elif screen.get_screen_index() == 1:
         play_screen.update()
+    elif screen.get_screen_index() == 2:
+        create_game_screen.update()
+
+
 
     pygame.display.flip()
 

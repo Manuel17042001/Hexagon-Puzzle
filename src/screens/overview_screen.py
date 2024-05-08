@@ -10,6 +10,7 @@ from utils.draw_utils import draw_stretched_hexagon
 from utils.math_utils import sin60
 
 _buttons = []
+mouse_left_button_pressed = False
 
 
 def update() -> None:
@@ -106,7 +107,7 @@ def draw_buttons(window: pygame.Surface, font_path: str):
                          start_game))
         _buttons.append(((button_center[0] - width / 2 - height, button_center[1] - height * sin60),
                          (button_center[0] + width / 2 + height, button_center[1] + height * sin60),
-                         start_new_game))
+                         create_new_game))
         _buttons.append(((button_center[0] - width / 2 - height, button_center[1] + height * 2 - height * sin60),
                          (button_center[0] + width / 2 + height, button_center[1] + height * 2 + height * sin60),
                          exit_game))
@@ -118,18 +119,21 @@ def draw_buttons(window: pygame.Surface, font_path: str):
 
         _buttons.append(((button_center[0] - width / 2 - height, button_center[1] - height - height * sin60),
                          (button_center[0] + width / 2 + height, button_center[1] - height + height * sin60),
-                         start_new_game))
+                         create_new_game))
         _buttons.append(((button_center[0] - width / 2 - height, button_center[1] + height - height * sin60),
                          (button_center[0] + width / 2 + height, button_center[1] + height + height * sin60),
                          exit_game))
 
 
 def check_buttons():
-    global _buttons
+    global _buttons, mouse_left_button_pressed
     mouse_buttons = pygame.mouse.get_pressed()
     mouse_pos = pygame.mouse.get_pos()
 
     if mouse_buttons[0] == 1:
+        mouse_left_button_pressed = True
+    if mouse_buttons[0] == 0 and mouse_left_button_pressed:
+        mouse_left_button_pressed = False
         for button in _buttons:
             begin, end, func = button
             if begin[0] < mouse_pos[0] < end[0] and begin[1] < mouse_pos[1] < end[1]:
@@ -143,9 +147,8 @@ def start_game():
     ScreenData().set_screen_index(1)
 
 
-def start_new_game():
-    GameManager().create_new_game(5, 5)
-    ScreenData().set_screen_index(1)
+def create_new_game():
+    ScreenData().set_screen_index(2)
 
 
 def exit_game():
