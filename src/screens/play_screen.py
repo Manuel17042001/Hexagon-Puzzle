@@ -416,7 +416,6 @@ def draw_hint(screen_data):
     n_x = int((window_width / 2) / 2 / sin60 / sl - 1 / 2 + 2)
     n_y = int(((window_height / 4 * 3) / sl - 1 / 2) * 2 / 3 + 2)
 
-    # TODO find Error in grid_start_position
     grid_x_start = int((n_x - grid_width) / 2) - 1 - 1
     grid_y_start = int((n_y - grid_height) / 2) - 2 + 1 - int((grid_height + 1) / 2) % 2
     t_x = (2 * grid_x_start + grid_y_start % 2) * sl * sin60
