@@ -110,9 +110,9 @@ class HexagonalMap(object):
 
         borders = []
 
-        for i in range(num_island):
+        for i in range(num_island - 1):
             borders.append([])
-            for _ in range(num_island - i):
+            for _ in range(num_island - i - 1):
                 borders[-1].append([])
 
         for i in range(1, self.__width - 1):
@@ -122,7 +122,9 @@ class HexagonalMap(object):
                         i_hexagon = tmp_map[i][j][1]
                         i_neighbour = tmp_map[x][y][1]
                         if i_hexagon != i_neighbour:
-                            borders[min(i_hexagon, i_neighbour) - 1][max(i_hexagon, i_neighbour) - 1].append(
+                            min_i = min(i_hexagon, i_neighbour)
+                            max_i = max(i_hexagon, i_neighbour)
+                            borders[min_i - 1][max_i - min_i - 1].append(
                                 ((i, j, tmp_map[i][j][2]), (x, y, tmp_map[x][y][2])))
 
         nearest_borders = []
