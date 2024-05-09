@@ -21,8 +21,8 @@ class GameManager:
     def get_game(self):
         return self._game
 
-    def create_new_game(self, width, height):
-        self._game = Game(width, height)
+    def create_new_game(self, width, height, fixed_tiles):
+        self._game = Game(width, height, fixed_tiles)
         resource_holder.update_screen_data(ScreenData(), (width, height))
 
     def save_game(self):

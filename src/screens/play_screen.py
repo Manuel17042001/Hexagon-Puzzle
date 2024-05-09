@@ -133,6 +133,13 @@ def draw_layout(screen_data: ScreenData) -> None:
     start_grid_x = (2 * (grid_x_start - 1) + (grid_y_start - 1) % 2) * side_length * sin60
     start_grid_y = (grid_y_start - 1) * side_length * 1.5
 
+    if not game.is_play_ground_initialised():
+        for tile in game.get_map().get_tiles():
+            if not tile.is_moveable():
+                tile.set_pos_x(start_grid_x)
+                tile.set_pos_y(start_grid_y)
+        game.set_play_ground_initialised()
+
     window.blit(resource_holder.grid_image, (0, 0))
 
     pygame.draw.rect(window, (20, 20, 31), ((window_width / 2, 0), (window_width, window_height)))
@@ -207,7 +214,7 @@ def remove_tile_from_actual_map(tile: Tile) -> None:
         tile.set_grid_pos(None)
 
 
-def add_tile_from_actual_map(tile: Tile) -> None:
+def add_tile_to_actual_map(tile: Tile) -> None:
     grid_width, grid_height = game.get_map().get_grid_size()
     grid_pos_x, grid_pos_y = tile.get_grid_pos()
     actual_map = copy.deepcopy(game.get_map().get_actual_map())
@@ -240,6 +247,8 @@ def pickup_tile(screen_data: ScreenData, mouse_pos: (int, int)) -> None:
     side_length = screen_data.get_hexagon_side_length()
 
     for tile in tiles:
+        if not tile.is_moveable():
+            continue
         tile_pos = tile.get_position()
         for hexagon in tile.get_hexagons():
             grid_x, grid_y = hexagon.get_coordinates()
@@ -306,7 +315,7 @@ def put_down_tile(screen_data: ScreenData) -> None:
         picked_tile.set_pos_y(pos_grid_xy[1])
         picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
         # add tile to actual_map
-        add_tile_from_actual_map(picked_tile)
+        add_tile_to_actual_map(picked_tile)
     else:
         for hexagon in picked_tile.get_hexagons():
             grid_x, grid_y = hexagon.get_coordinates()
@@ -327,7 +336,7 @@ def put_down_tile(screen_data: ScreenData) -> None:
         pos_grid_xy, grid_xy = check_is_pos_in_grid(pos_tile, screen_data)
         if grid_xy is not None:
             picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
-            add_tile_from_actual_map(picked_tile)
+            add_tile_to_actual_map(picked_tile)
 
 
 def update_picked_tile_pos(mouse_pos) -> None:
@@ -453,7 +462,8 @@ def draw_tiles(screen_data):
                     y1 = t_y + h_y * sl * 1.5 + sl * math.sin(angle1)
                     x2 = t_x + (2 * h_x + h_y % 2) * sl * sin60 + sl * math.cos(angle2)
                     y2 = t_y + h_y * sl * 1.5 + sl * math.sin(angle2)
-                    pygame.draw.line(screen_data.get_window(), (255, 255, 255), (x1, y1), (x2, y2), 5)
+                    if tile.is_moveable():
+                        pygame.draw.line(screen_data.get_window(), (255, 255, 255), (x1, y1), (x2, y2), 5)
 
 
 def draw_hint(screen_data):

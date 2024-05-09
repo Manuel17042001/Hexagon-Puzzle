@@ -14,6 +14,8 @@ mouse_left_button_pressed = False
 grid_width, grid_height = 5, 5
 border_grid_width = (3, 8)
 border_grid_height = (3, 8)
+fixed_tiles = [("None", 0), ("Some 10%", 0.1), ("Many 20%", 0.2), ("Moste 30%", 0.3)]
+fixed_tiles_index = 1
 
 
 def update() -> None:
@@ -88,8 +90,9 @@ def draw_buttons(window: pygame.Surface, font_path: str):
     width, height = font_button.render(text_button_1, True, (255, 255, 255)).get_size()
 
     height *= 0.75
-    button_center_1 = window.get_width() / 2, window.get_height() * 4 / 9
-    button_center_2 = window.get_width() / 2, window.get_height() * 3 / 4
+    button_center_1 = window.get_width() / 2, window.get_height() * 2 / 5
+    button_center_3 = window.get_width() / 2, window.get_height() * 5 / 6
+    button_center_2 = window.get_width() / 2, (button_center_1[1] + button_center_3[1] + height) / 2
 
     _buttons = []
 
@@ -109,10 +112,19 @@ def draw_buttons(window: pygame.Surface, font_path: str):
     draw_button(window, font_button, "+".format(grid_width), 0, height,
                 (button_center_1[0] + width, button_center_1[1] + height * 2))
 
-    draw_button(window, font_button, text_button_1, width, height,
+    draw_button(window, font_button, "Fixed tiles", width, height,
                 (button_center_2[0], button_center_2[1] - height))
-    draw_button(window, font_button, text_button_2, width, height,
+    draw_button(window, font_button, fixed_tiles[fixed_tiles_index][0], width, height,
                 (button_center_2[0], button_center_2[1] + height))
+    draw_button(window, font_button, "+".format(grid_width), 0, height,
+                (button_center_2[0] + width, button_center_2[1] + height))
+    draw_button(window, font_button, "-".format(grid_width), 0, height,
+                (button_center_2[0] - width, button_center_2[1] + height))
+
+    draw_button(window, font_button, text_button_1, width, height,
+                (button_center_3[0], button_center_3[1] - height))
+    draw_button(window, font_button, text_button_2, width, height,
+                (button_center_3[0], button_center_3[1] + height))
 
     sl = ScreenData().get_hexagon_side_length()
 
@@ -122,7 +134,6 @@ def draw_buttons(window: pygame.Surface, font_path: str):
     _buttons.append(((button_center_1[0] - width - sl / 2 - height, button_center_1[1] + height * 2 - height * sin60),
                      (button_center_1[0] - width + sl / 2 + height, button_center_1[1] + height * 2 + height * sin60),
                      reduce_grid_height))
-
     _buttons.append(((button_center_1[0] + width - sl / 2 - height, button_center_1[1] - height * sin60),
                      (button_center_1[0] + width + sl / 2 + height, button_center_1[1] + height * sin60),
                      add_grid_width))
@@ -130,11 +141,18 @@ def draw_buttons(window: pygame.Surface, font_path: str):
                      (button_center_1[0] + width + sl / 2 + height, button_center_1[1] + height * 2 + height * sin60),
                      add_grid_height))
 
-    _buttons.append(((button_center_2[0] - width / 2 - height, button_center_2[1] - height - height * sin60),
-                     (button_center_2[0] + width / 2 + height, button_center_2[1] - height + height * sin60),
+    _buttons.append(((button_center_2[0] - width - sl / 2 - height, button_center_2[1] + height - height * sin60),
+                     (button_center_2[0] - width + sl / 2 + height, button_center_2[1] + height + height * sin60),
+                     reduce_fixed_tiles))
+    _buttons.append(((button_center_2[0] + width - sl / 2 - height, button_center_2[1] + height - height * sin60),
+                     (button_center_2[0] + width + sl / 2 + height, button_center_2[1] + height + height * sin60),
+                     add_fixed_tiles))
+
+    _buttons.append(((button_center_3[0] - width / 2 - height, button_center_3[1] - height - height * sin60),
+                     (button_center_3[0] + width / 2 + height, button_center_3[1] - height + height * sin60),
                      start_new_game))
-    _buttons.append(((button_center_2[0] - width / 2 - height, button_center_2[1] + height - height * sin60),
-                     (button_center_2[0] + width / 2 + height, button_center_2[1] + height + height * sin60),
+    _buttons.append(((button_center_3[0] - width / 2 - height, button_center_3[1] + height - height * sin60),
+                     (button_center_3[0] + width / 2 + height, button_center_3[1] + height + height * sin60),
                      go_to_overview_screen))
 
 
@@ -161,7 +179,7 @@ def start_game():
 
 
 def start_new_game():
-    GameManager().create_new_game(grid_width, grid_height)
+    GameManager().create_new_game(grid_width, grid_height, fixed_tiles[fixed_tiles_index][1])
     GameManager().save_game()
     ScreenData().set_screen_index(1)
 
@@ -192,3 +210,15 @@ def reduce_grid_height():
     global grid_height
     if grid_height > border_grid_height[0]:
         grid_height -= 1
+
+
+def add_fixed_tiles():
+    global fixed_tiles_index
+    if fixed_tiles_index < len(fixed_tiles) - 1:
+        fixed_tiles_index += 1
+
+
+def reduce_fixed_tiles():
+    global fixed_tiles_index
+    if fixed_tiles_index > 0:
+        fixed_tiles_index -= 1

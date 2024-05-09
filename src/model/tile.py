@@ -15,6 +15,7 @@ class Tile(object):
         self.__pos_y = pos_y
         self.__hexagons = hexagons
         self.__grid_pos = None
+        self.__moveable = True
 
     def get_pos_x(self) -> float:
         """Get the x-coordinate of the tile."""
@@ -47,6 +48,12 @@ class Tile(object):
     def set_grid_pos(self, pos: (int, int)) -> None:
         """Set the grid position of the tile."""
         self.__grid_pos = pos
+
+    def is_moveable(self) -> bool:
+        return self.__moveable
+
+    def set_moveable(self, moveable: bool) -> None:
+        self.__moveable = moveable
 
     def normalise_hexagon_pos(self):
         """

@@ -8,7 +8,7 @@ from utils.math_utils import get_neighbour_coordinates
 
 
 def find_all_placements(width, height, tile, i, game):
-    if tile.get_grid_pos() is not None:
+    if tile.get_grid_pos() is not None or not tile.is_moveable():
         return []
     placement_list = []
     for y in range(1, height + 1):
@@ -105,7 +105,7 @@ def is_solution_correctly(solution, game) -> bool:
     return True
 
 
-def solve(init_rows, row_tile, game):
+def solve(init_rows, game):
     s = Solver()
 
     rows = [Bool('row_%d' % r) for r in range(len(init_rows))]

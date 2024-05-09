@@ -11,19 +11,21 @@ from utils.math_utils import get_neighbour_coordinates
 
 class HexagonalMap(object):
 
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, fixed_tiles: float):
         """
         Initialize a hexagonal map with the specified width and height.
         :param width: The width of the map (must be greater than or equal to 3).
         :param height: The height of the map (must be greater than or equal to 3).
+        :param fixed_tiles: Whether the map has fixed tiles or not.
         """
         assert width >= 3 and height >= 3, "Width and height have to be greater or equal to 3"
         self.__width = width + 2  # add two for the border on the left and right
         self.__height = height + 2  # add two for the border on the top and bottom
         self.__generate_map()  # generate map with constrains
         self.__puzzle_map = None
-        self.__tiles = self.generate_puzzle()
+        self.__fixed_tiles = fixed_tiles
         self.__actual_map = [[None for _ in range(self.__width)] for _ in range(self.__height)]
+        self.__tiles = self.generate_puzzle()
 
     def get_grid_size(self) -> (int, int):
         return self.__width - 2, self.__height - 2
@@ -202,6 +204,13 @@ class HexagonalMap(object):
                     tiles[value].get_hexagons().append(Hexagon(x, y, self._map[x][y]))
 
         for tile in tiles:
+            if random.random() < self.__fixed_tiles:
+                tile.set_moveable(False)
+                for hexagon in tile.get_hexagons():
+                    x, y = hexagon.get_coordinates()
+                    self.__actual_map[y][x] = hexagon.get_color()
+                tile.set_grid_pos(tile.get_hexagons()[0].get_coordinates())
+                continue
             tile.normalise_hexagon_pos()
             if random.random() < 0.33:
                 tile.flip_horizontal()
