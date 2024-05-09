@@ -412,9 +412,9 @@ def show_loading_screen(screen_data):
                                        (255, 255, 255), 3)
 
         max_dots = 3
-        text = "Loading"
+        text = "Searching for solution"
 
-        font_size = int(height * 0.06)
+        font_size = int(height * 0.036)
         font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
         font_title = pygame.font.Font(font_path, font_size)
         text_ref = font_title.render(text + "." * max_dots, True, (255, 255, 255))
