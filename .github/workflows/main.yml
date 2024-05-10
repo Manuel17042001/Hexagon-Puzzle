@@ -56,3 +56,8 @@ jobs:
           cd ./src
           pyinstaller --onefile main.py
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: your_script_exe
+          path: ./src/dist/your_script.exe
