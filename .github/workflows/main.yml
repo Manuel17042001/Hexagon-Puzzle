@@ -34,10 +34,5 @@ jobs:
     - name: Checkout-Repository
       uses: actions/checkout@v2
 
-    - name: Initialize Buildozer
-      run: |
-        cd src \
-        buildozer init
-
     - name: Build APK
-      run: tree .
+      run: buildozer -v android debug
