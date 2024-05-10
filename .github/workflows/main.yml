@@ -38,5 +38,4 @@ jobs:
       - name: Build APK
         run: |
           cd ./src
-          tree .
-          echo "yes" | echo "yes" | buildozer -v android debug
+          echo "yes" | echo "yes" | echo "yes" | buildozer -v android debug
