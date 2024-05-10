@@ -35,4 +35,4 @@ jobs:
       run: buildozer init
 
     - name: Build APK
-      run: ls -l -a ~
+      run: tree .
