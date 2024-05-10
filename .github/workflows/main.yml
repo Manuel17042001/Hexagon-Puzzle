@@ -35,12 +35,6 @@ jobs:
       - name: Checkout-Repository
         uses: actions/checkout@v2
 
-      - name: Accept Buildozer 3 licenses
-        run: |
-          echo "y" | buildozer license accept
-          echo "y" | buildozer android debug
-          echo "y" | buildozer ios debug
-
       - name: Build APK
         run: |
           cd ./src
