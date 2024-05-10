@@ -36,6 +36,6 @@ jobs:
 
     - name: Build APK
       run: |
-        cd ./src \
-        tree . \
+        cd ./src
+        tree .
         buildozer -v android debug
