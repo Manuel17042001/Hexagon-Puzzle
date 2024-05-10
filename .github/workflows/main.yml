@@ -60,4 +60,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your_script_exe
-          path: ./src/dist/your_script.exe
+          path: ./src/dist/main.exe
