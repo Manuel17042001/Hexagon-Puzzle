@@ -46,7 +46,11 @@ jobs:
 
     steps:
       - name: Install PyInstaller
-        run: pip install pyinstaller
+        run:
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
 
       - name: Checkout Repository
         uses: actions/checkout@v2
