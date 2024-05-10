@@ -35,7 +35,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Initialize Buildozer
-      run: buildozer init
+      run: |
+        cd src \
+        buildozer init
 
     - name: Build APK
       run: tree .
