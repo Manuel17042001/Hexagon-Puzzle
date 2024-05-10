@@ -30,6 +30,7 @@ jobs:
           libavcodec-dev \
           zlib1g-dev \
           libsqlite3-dev \
+          pip install echo \
           echo "export PATH=$PATH:~/.local/bin/" >> ~/.bashrc
 
     - name: Initialize Buildozer
