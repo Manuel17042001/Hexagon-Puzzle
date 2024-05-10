@@ -42,7 +42,7 @@ jobs:
           echo y | buildozer -v android debug
 
   build-exe:
-    runs-on: ubuntu-22.04
+    runs-on: windows-latest
 
     steps:
       - name: Install PyInstaller
