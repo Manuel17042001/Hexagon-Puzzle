@@ -55,6 +55,7 @@ jobs:
         run: |
           cd ./src
           pyinstaller --onefile main.py
+          tree .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
