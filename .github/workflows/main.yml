@@ -31,6 +31,7 @@ jobs:
             libavcodec-dev \
             zlib1g-dev \
             libsqlite3-dev
+            ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager "build-tools;29.0.0"
 
       - name: Checkout-Repository
         uses: actions/checkout@v2
