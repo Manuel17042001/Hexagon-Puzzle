@@ -31,8 +31,11 @@ jobs:
           zlib1g-dev \
           libsqlite3-dev
 
+    - name: Checkout-Repository
+      uses: actions/checkout@v2
+
     - name: Initialize Buildozer
       run: buildozer init
 
     - name: Build APK
-      run: tree ~\home
+      run: tree .
