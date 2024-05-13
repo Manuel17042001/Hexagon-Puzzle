@@ -355,7 +355,7 @@ def put_down_tile(screen_data: ScreenData) -> None:
                 if grid_y > window_height * 3 / 4:
                     update_tile_shape(grid_x, screen_data)
                     if pickup_tile_pos[0] < window_width / 2:
-                        pickup_tile_pos = [window_width / 4 * 3, window_height / 4 * 3 / 2]  # todo make it dynamic
+                        pickup_tile_pos = [window_width / 4 * 3, window_height / 4 * 3 / 2]
                 picked_tile.set_pos_x(pickup_tile_pos[0])
                 picked_tile.set_pos_y(pickup_tile_pos[1])
         pos_tile = picked_tile.get_position()
