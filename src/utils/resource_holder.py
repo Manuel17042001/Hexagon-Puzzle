@@ -11,26 +11,22 @@ image_icon = pygame.image.load("./resources/icon.png")
 
 image_hexagon_orange_unscaled = pygame.image.load("./resources/hexagon_orange.png")
 image_hexagon_blue_unscaled = pygame.image.load("./resources/hexagon_blue.png")
-image_hexagon_orange = pygame.transform.scale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
-image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
+image_hexagon_orange = pygame.transform.smoothscale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
+image_hexagon_blue = pygame.transform.smoothscale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
-# Todo replace images
 image_rotation_left_unscaled = pygame.image.load("./resources/rotation_left.png")
 image_rotation_right_unscaled = pygame.image.load("./resources/rotation_right.png")
 image_rotation_left = image_rotation_left_unscaled
 image_rotation_right = image_rotation_right_unscaled
 
-# Todo replace images
 image_flip_vertical_unscaled = pygame.image.load("./resources/flip_vertical.png")
 image_flip_horizontal_unscaled = pygame.image.load("./resources/flip_horizontal.png")
 image_flip_vertical = image_flip_vertical_unscaled
 image_flip_horizontal = image_flip_horizontal_unscaled
 
-# Todo replace images
 image_icon_exit_unscaled = pygame.image.load("./resources/exit_icon.png")
 image_icon_exit = image_icon_exit_unscaled
 
-# Todo replace images
 image_icon_hint_unscaled = pygame.image.load("./resources/hint_icon.png")
 image_icon_hint = image_icon_hint_unscaled
 image_icon_colored_hint_unscaled = pygame.image.load("./resources/colored_hint_icon.png")
@@ -59,15 +55,15 @@ def update_screen_data(screen, grid_size):
 
     scale = min(window.get_width(), window.get_height()) / 6
     scale_rotation_flip_image = (scale, scale)
-    image_rotation_left = pygame.transform.scale(image_rotation_left_unscaled, scale_rotation_flip_image)
-    image_rotation_right = pygame.transform.scale(image_rotation_right_unscaled, scale_rotation_flip_image)
-    image_flip_vertical = pygame.transform.scale(image_flip_vertical_unscaled, scale_rotation_flip_image)
-    image_flip_horizontal = pygame.transform.scale(image_flip_horizontal_unscaled, scale_rotation_flip_image)
+    image_rotation_left = pygame.transform.smoothscale(image_rotation_left_unscaled, scale_rotation_flip_image)
+    image_rotation_right = pygame.transform.smoothscale(image_rotation_right_unscaled, scale_rotation_flip_image)
+    image_flip_vertical = pygame.transform.smoothscale(image_flip_vertical_unscaled, scale_rotation_flip_image)
+    image_flip_horizontal = pygame.transform.smoothscale(image_flip_horizontal_unscaled, scale_rotation_flip_image)
 
     icon_scale = window.get_height() / 15
-    image_icon_exit = pygame.transform.scale(image_icon_exit_unscaled, (icon_scale, icon_scale))
-    image_icon_hint = pygame.transform.scale(image_icon_hint_unscaled, (icon_scale, icon_scale))
-    image_icon_colored_hint = pygame.transform.scale(image_icon_colored_hint_unscaled, (icon_scale, icon_scale))
+    image_icon_exit = pygame.transform.smoothscale(image_icon_exit_unscaled, (icon_scale, icon_scale))
+    image_icon_hint = pygame.transform.smoothscale(image_icon_hint_unscaled, (icon_scale, icon_scale))
+    image_icon_colored_hint = pygame.transform.smoothscale(image_icon_colored_hint_unscaled, (icon_scale, icon_scale))
 
     __update_grid_image(screen, grid_size)
 
