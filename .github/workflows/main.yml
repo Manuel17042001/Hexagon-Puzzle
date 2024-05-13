@@ -8,6 +8,7 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-22.04
+    if: false
 
     steps:
       - name: Install Buildozer Dependencies
@@ -42,7 +43,7 @@ jobs:
           echo y | buildozer -v android debug
 
   build-exe:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Install PyInstaller
