@@ -12,7 +12,7 @@ from model.game_manager import GameManager
 from model.screen_data import ScreenData
 from model.tile import Tile
 from utils import draw_utils, resource_holder, system_utils
-from utils.draw_utils import draw_stretched_hexagon, draw_hexagonal_gird_background, draw_hexagon_image
+from utils.draw_utils import draw_stretched_hexagon, draw_rectangular_background, draw_hexagon_image
 from utils.math_utils import sin60
 
 pickup_mouse_pos: (float, float)
@@ -75,12 +75,12 @@ def update() -> None:
 def draw_solved_overlay(screen_data: ScreenData) -> None:
     window = screen_data.get_window()
     width, height = window.get_size()
-    draw_hexagonal_gird_background(window, (width / 2, height / 2), width, height,
-                                   (0, 0, 0, 150),
-                                   (0, 0, 0), 1)
-    draw_hexagonal_gird_background(window, (width / 2, height / 2), width / 5 * 3, height / 5 * 3,
-                                   (20, 20, 31, 200),
-                                   (255, 255, 255), 3)
+    draw_rectangular_background(window, (width / 2, height / 2), width, height,
+                                (0, 0, 0, 150),
+                                (0, 0, 0), 1)
+    draw_rectangular_background(window, (width / 2, height / 2), width / 5 * 3, height / 5 * 3,
+                                (20, 20, 31, 200),
+                                (255, 255, 255), 3)
 
     font_size = int(height * 0.12)
     font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
@@ -441,9 +441,9 @@ def show_loading_screen(screen_data):
         l_width, l_height = width / 6 * 2, height / 7
 
         rect = pygame.Rect(width / 2 - l_width / 2, height / 2 - l_height / 2, l_width, l_height)
-        draw_hexagonal_gird_background(window, (width / 2, height / 2), rect.width, rect.height,
-                                       (20, 20, 31, 255),
-                                       (255, 255, 255), 3)
+        draw_rectangular_background(window, (width / 2, height / 2), rect.width, rect.height,
+                                    (20, 20, 31, 255),
+                                    (255, 255, 255), 3)
 
         max_dots = 3
         text = "Searching for solution"

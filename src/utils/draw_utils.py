@@ -63,11 +63,10 @@ def draw_stretched_hexagon(surface: pygame.Surface, center: tuple[float, float],
     surface.blit(stretched_hexagon, (center[0] - side_length - horizontal_line_length / 2, center[1] - side_length))
 
 
-def draw_hexagonal_gird_background(surface: pygame.Surface, center: tuple[float, float], width: int, height: int,
-                                   background_color: tuple[int, int, int, int],
-                                   line_color: tuple[int, int, int],
-                                   line_thickness: int) -> None:
-    # TODO make better
+def draw_rectangular_background(surface: pygame.Surface, center: tuple[float, float], width: int, height: int,
+                                background_color: tuple[int, int, int, int],
+                                line_color: tuple[int, int, int],
+                                line_thickness: int) -> None:
     transparent_surface = pygame.Surface((width, height), pygame.SRCALPHA)
     pygame.draw.rect(transparent_surface, background_color,
                      pygame.Rect(0, 0, width, height))
