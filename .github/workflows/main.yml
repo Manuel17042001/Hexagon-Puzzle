@@ -61,6 +61,7 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.py --onefile --noconsole
+          find ~ -name "libz3.so"
 
       - name: Upload Artifact for Linux
         uses: actions/upload-artifact@v2
@@ -70,6 +71,7 @@ jobs:
 
   build_windows:
     runs-on: windows-latest
+    if: false
 
     steps:
       - name: Install dependencies
@@ -95,6 +97,7 @@ jobs:
 
   build_macos:
     runs-on: macos-latest
+    if: false
 
     steps:
       - name: Install dependencies
