@@ -1,5 +1,6 @@
 import copy
 import random
+from datetime import datetime
 
 from model import hexagonal_map
 from solver import my_solver
@@ -11,6 +12,8 @@ class Game:
         self.map = hexagonal_map.HexagonalMap(grid_width, grid_height, fixed_tiles)
         self.fixed_tiles = fixed_tiles
         self.play_ground_initialised = False
+        self.time = 0
+        self.time_start = None
 
     def get_map(self):
         return self.map
@@ -23,6 +26,20 @@ class Game:
 
     def is_fixed_tiles(self):
         return self.fixed_tiles
+
+    def time_run(self):
+        if self.time_start is None:
+            self.time_start = datetime.now().timestamp()
+
+    def time_stop(self):
+        if self.time_start is not None:
+            self.time += datetime.now().timestamp() - self.time_start
+            self.time_start = None
+
+    def get_time(self):
+        if self.time_start is not None:
+            return self.time + datetime.now().timestamp() - self.time_start
+        return self.time
 
     def get_hint(self, game):
         grid_width, grid_height = self.get_map().get_grid_size()

@@ -47,6 +47,7 @@ def update() -> None:
     draw_hint(screen_data)
 
     if solved:
+        game.time_stop()
         draw_solved_overlay(screen_data)
         return
     elif game.get_map().is_puzzle_correctly():
@@ -67,6 +68,7 @@ def update() -> None:
         window.blit(text_no_solution, (width / 4 - txt_width / 2, height / 4 * 2.5))
 
     if not solved:
+        game.time_run()
         update_mouse_movement(screen_data)
 
 
@@ -147,6 +149,17 @@ def draw_layout(screen_data: ScreenData) -> None:
     pygame.draw.rect(window, (50, 50, 70), ((window_width / 2, 0), (window_width / 2, window_height / 15)))
     pygame.draw.rect(window, (0, 0, 0),
                      ((window_width / 2, window_height / 15), (window_width / 2, window_height / 15 * 0.05)))
+
+    game_time = int(game.get_time())
+    seconds = game_time % 60
+    minute = game_time // 60
+    font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+    font_size = int(window_height * 0.12)
+    font_time = pygame.font.Font(font_path, int(font_size * 0.2))
+    text_time = font_time.render(f" Time {str(minute).zfill(2)}:{str(seconds).zfill(2)}", True, (255, 255, 255))
+    txt_width, txt_height = text_time.get_size()
+    window.blit(text_time, (window_width / 2 + (window_height / 15 / 2 - txt_height / 2),
+                            window_height / 15 / 2 - txt_height / 2))
 
     window.blit(resource_holder.image_icon_exit, (window_width - resource_holder.image_icon_exit.get_width(), 0))
     window.blit(resource_holder.image_icon_hint, (
@@ -365,6 +378,7 @@ def update_mouse_movement(screen_data):
         if mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() and mouse_pos[
             1] < window_height / 15:
             hexagons_hint = []
+            game.time_stop()
             GameManager().save_game()
             screen_data.set_screen_index(0)
         elif mouse_pos[0] > window_width - resource_holder.image_icon_exit.get_width() * 3 and mouse_pos[
@@ -375,9 +389,11 @@ def update_mouse_movement(screen_data):
             result = queue.Queue()
             loading_thread = threading.Thread(target=show_loading_screen, args=(screen_data,))
             hint_thread = threading.Thread(target=get_hint, args=(game, result))
+            game.time_stop()
             loading_thread.start()
             hint_thread.start()
             hint_thread.join()
+            game.time_run()
             loading_flag = False
             hint = result.get()
             if hint is not None:
