@@ -240,7 +240,7 @@ def remove_tile_from_actual_map(tile: Tile) -> None:
         tile.set_grid_pos(None)
 
 
-def add_tile_to_actual_map(tile: Tile) -> None:
+def add_tile_to_actual_map(tile: Tile) -> bool:
     grid_width, grid_height = game.get_map().get_grid_size()
     grid_pos_x, grid_pos_y = tile.get_grid_pos()
     actual_map = copy.deepcopy(game.get_map().get_actual_map())
@@ -249,17 +249,19 @@ def add_tile_to_actual_map(tile: Tile) -> None:
         hexagon_grid_y = hexagon.get_y() + grid_pos_y
         hexagon_grid_x = hexagon.get_x() + grid_pos_x + (grid_pos_y % 2 != 0 and hexagon_grid_y % 2 == 0)
 
-        if 0 < hexagon_grid_x <= grid_width and 0 < hexagon_grid_y <= grid_height and \
-                actual_map[hexagon_grid_y][hexagon_grid_x] is None:
+        if (0 < hexagon_grid_x <= grid_width and 0 < hexagon_grid_y <= grid_height and
+                actual_map[hexagon_grid_y][hexagon_grid_x] is None):
             actual_map[hexagon_grid_y][hexagon_grid_x] = hexagon.get_color()
         else:
             tile.set_pos_x(pickup_tile_pos[0])
             tile.set_pos_y(pickup_tile_pos[1])
             tile.set_grid_pos(None)
-            break
+            return False
 
     if tile.get_grid_pos() is not None:
         game.get_map().set_actual_map(actual_map)
+        return True
+    return False
 
 
 def pickup_tile(screen_data: ScreenData, mouse_pos: (int, int)) -> None:
@@ -340,8 +342,12 @@ def put_down_tile(screen_data: ScreenData) -> None:
         picked_tile.set_pos_x(pos_grid_xy[0])
         picked_tile.set_pos_y(pos_grid_xy[1])
         picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
-        # add tile to actual_map
-        add_tile_to_actual_map(picked_tile)
+        if not add_tile_to_actual_map(picked_tile):
+            pos_tile = picked_tile.get_position()
+            pos_grid_xy, grid_xy = check_is_pos_in_grid(pos_tile, screen_data)
+            if grid_xy is not None:
+                picked_tile.set_grid_pos((grid_xy[0], grid_xy[1]))
+                add_tile_to_actual_map(picked_tile)
     else:
         for hexagon in picked_tile.get_hexagons():
             grid_x, grid_y = hexagon.get_coordinates()
