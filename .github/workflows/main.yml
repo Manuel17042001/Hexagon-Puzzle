@@ -61,7 +61,6 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.py --onefile --noconsole
-          tree .
 
       - name: Upload Artifact for Linux
         uses: actions/upload-artifact@v2
@@ -87,7 +86,6 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.py --onefile --noconsole
-          tree .
 
       - name: Upload Artifact for Windows
         uses: actions/upload-artifact@v2
@@ -113,7 +111,6 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.py --onefile --noconsole
-          tree .
 
       - name: Upload Artifact for macOS
         uses: actions/upload-artifact@v2
