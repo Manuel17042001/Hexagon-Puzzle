@@ -11,16 +11,15 @@ def find_all_placements(width, height, tile, i, game):
     if tile.get_grid_pos() is not None or not tile.is_moveable():
         return []
     placement_list = []
-    for y in range(1, height + 1):
-        for x in range(1, width + 1):
-            tmp_tile: Tile = copy.deepcopy(tile)
-            for rotations in range(6):
-                tmp_rotated_tile = copy.deepcopy(tmp_tile)
-                for flip in [True, False]:
-                    for _ in range(rotations):
-                        tmp_rotated_tile.rotate(True)
-                    if flip:
-                        tmp_rotated_tile.flip_horizontal()
+    for flip in [False, True]:
+        tmp_tile: Tile = copy.deepcopy(tile)
+        if flip:
+            tmp_tile.flip_vertical()
+        for _ in range(6):
+            tmp_tile.rotate(False)
+            tmp_rotated_tile = copy.deepcopy(tmp_tile)
+            for y in range(1, height + 1):
+                for x in range(1, width + 1):
                     place_tile_at_position(x, y, tmp_rotated_tile)
                     if can_be_placed(width, height, tmp_rotated_tile, game):
                         list_pos_hexagons = []
@@ -156,4 +155,3 @@ def solve(init_rows, game):
         s.add(Or(block))
 
     return None
-
