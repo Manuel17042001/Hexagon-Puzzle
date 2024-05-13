@@ -42,12 +42,39 @@ jobs:
           cd ./src
           echo y | buildozer -v android debug
 
-  build-exe:
+  build_ubuntu:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install PyInstaller
-        run:
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
+          sudo apt-get install tree
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build EXE for Linux
+        run: |
+          cd ./src
+          pyinstaller main.py --onefile --noconsole
+          tree .
+
+      - name: Upload Artifact for Linux
+        uses: actions/upload-artifact@v2
+        with:
+          name: your_script_linux_exe
+          path: ./src/dist/main
+
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
           pip install pyinstaller
           pip install pygame
           pip install numpy
@@ -56,14 +83,40 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Build EXE
+      - name: Build EXE for Windows
         run: |
           cd ./src
           pyinstaller main.py --onefile --noconsole
           tree .
 
-      - name: Upload Artifact
+      - name: Upload Artifact for Windows
         uses: actions/upload-artifact@v2
         with:
-          name: your_script_exe
-          path: ./src/dist/main
+          name: your_script_windows_exe
+          path: ./src/dist/main.exe
+
+  build_macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build APP for macOS
+        run: |
+          cd ./src
+          pyinstaller main.py --onefile --noconsole
+          tree .
+
+      - name: Upload Artifact for macOS
+        uses: actions/upload-artifact@v2
+        with:
+          name: your_script_macos_app
+          path: ./src/dist/main.app
