@@ -168,6 +168,19 @@ def draw_layout(screen_data: ScreenData) -> None:
         window_width - resource_holder.image_icon_exit.get_width() - resource_holder.image_icon_hint.get_width() - resource_holder.image_icon_colored_hint.get_width(),
         0))
 
+    colored_hint_count, hint_count = game.get_colored_hint_count(), game.get_hint_count()
+    font_time = pygame.font.Font(font_path, int(font_size * 0.13))
+    text_colored_hint_count = font_time.render(f"{colored_hint_count}", True, (150, 150, 150))
+    txt_width, txt_height = text_colored_hint_count.get_size()
+    window.blit(text_colored_hint_count, (
+        window_width - resource_holder.image_icon_exit.get_width() - resource_holder.image_icon_hint.get_width() - txt_width,
+        window_height / 15 - txt_height))
+    text_hint_count = font_time.render(f"{hint_count}", True, (150, 150, 150))
+    txt_width, txt_height = text_hint_count.get_size()
+    window.blit(text_hint_count, (
+        window_width - resource_holder.image_icon_exit.get_width() - txt_width,
+        window_height / 15 - txt_height))
+
     image_size = resource_holder.image_flip_vertical.get_size()
 
     image_offset_x = (window_width / 4 - image_size[0]) / 2
@@ -398,7 +411,12 @@ def update_mouse_movement(screen_data):
             hint = result.get()
             if hint is not None:
                 hexagons_hint = game.get_hint(game)[1]
+                if colored_hint is True:
+                    game.increase_colored_hint_count()
+                else:
+                    game.increase_hint_count()
             else:
+                game.increase_hint_count()
                 hexagons_hint = []
                 last_no_solution_time = system_utils.time_in_millis()
 

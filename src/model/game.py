@@ -14,6 +14,8 @@ class Game:
         self.play_ground_initialised = False
         self.time = 0
         self.time_start = None
+        self.hint_count = 0
+        self.colored_hint_count = 0
 
     def get_map(self):
         return self.map
@@ -40,6 +42,18 @@ class Game:
         if self.time_start is not None:
             return self.time + datetime.now().timestamp() - self.time_start
         return self.time
+
+    def increase_hint_count(self):
+        self.hint_count += 1
+
+    def increase_colored_hint_count(self):
+        self.colored_hint_count += 1
+
+    def get_hint_count(self):
+        return self.hint_count
+
+    def get_colored_hint_count(self):
+        return self.colored_hint_count
 
     def get_hint(self, game):
         grid_width, grid_height = self.get_map().get_grid_size()
