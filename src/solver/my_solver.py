@@ -126,25 +126,13 @@ def solve(init_rows, game):
             inv_tbl_board[coord].append(cur_row)
         cur_row = cur_row + 1
 
-    # at this point, inv_tbl_poly is a dict, it has poly type as a key and list of rows as a value
-    # these are rows where specific poly type is stored
-
-    # inv_tbl_board is also a dict. key=tuple (coordinates). value=list of rows, which can cover this cell on board.
-
-    # only one row can be selected from inv_tbl_poly, meaning, each tile can be connected to only one row:
     for tile in inv_tbl_poly:
         tmp = [rows[q] for q in inv_tbl_poly[tile]]
-        # only one True must be present in tmp.
-        # AtMost()/AtLeast() takes list of arguments + k.
-        # we pass here a list + 1 as an arguments to functions:
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
-    # only one row can be selected from inv_tbl_board, meaning, each cell on board can be connected to only one row:
     for tile in inv_tbl_board:
         tmp = [rows[q] for q in inv_tbl_board[tile]]
-
-        # only one True must be present in tmp:
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
@@ -164,14 +152,7 @@ def solve(init_rows, game):
 
         block = []
         for d in m:
-            # d is a declaration
-            if d.arity() > 1:
-                raise Z3Exception("uninterpreted functions are not supported")
-            # create a constant from declaration
-            c = d()
-            if is_array(c) or c.sort().kind() == Z3_UNINTERPRETED_SORT:
-                raise Z3Exception("arrays and uninterpreted sorts are not supported")
-            block.append(c != m[d])
+            block.append(d() != m[d])
         s.add(Or(block))
 
     return None
