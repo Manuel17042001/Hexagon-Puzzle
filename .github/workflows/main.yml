@@ -111,9 +111,10 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.spec
+          mv dist/HexagonPuzzle dist/HexagonPuzzle.app
 
       - name: Upload Artifact for macOS
         uses: actions/upload-artifact@v2
         with:
           name: your_script_macos_app
-          path: ./src/dist/HexagonPuzzle
+          path: ./src/dist/HexagonPuzzle.app
