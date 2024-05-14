@@ -66,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your_script_linux_exe
-          path: ./src/dist/main
+          path: ./src/dist/HexagonPuzzle
 
   build_windows:
     runs-on: windows-latest
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your_script_windows_exe
-          path: ./src/dist/main.exe
+          path: ./src/dist/HexagonPuzzle.exe
 
   build_macos:
     runs-on: macos-latest
@@ -116,4 +116,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your_script_macos_app
-          path: ./src/dist/main
+          path: ./src/dist/HexagonPuzzle
