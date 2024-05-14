@@ -60,7 +60,7 @@ jobs:
       - name: Build EXE for Linux
         run: |
           cd ./src
-          pyinstaller main.py --onefile --noconsole
+          pyinstaller main.spec
 
       - name: Upload Artifact for Linux
         uses: actions/upload-artifact@v2
@@ -85,7 +85,7 @@ jobs:
       - name: Build EXE for Windows
         run: |
           cd ./src
-          pyinstaller main.py --onefile --noconsole
+          pyinstaller main.spec
 
       - name: Upload Artifact for Windows
         uses: actions/upload-artifact@v2
