@@ -10,7 +10,6 @@ pygame.init()
 
 # Bestimme das Ausführungsverzeichnis
 exe_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-exe_dir = os.path.abspath(os.path.join(exe_dir, ".."))
 
 
 # Pfade zur Schriftartdatei relativ zum Ausführungsverzeichnis
@@ -19,7 +18,7 @@ font_path = os.path.join(exe_dir, "resources", "fonts", "Tektur-ExtraBold.ttf")
 # Pfade zu den Bildern relativ zum Ausführungsverzeichnis
 image_background_start_screen_path = os.path.join(exe_dir, "resources", "1000x1500.png")
 image_hexagon_start_screen_path = os.path.join(exe_dir, "resources", "hexagon_splash_screen.png")
-image_icon_path = os.path.join(exe_dir, "resources", "icon.png")
+image_icon_path = os.path.join(exe_dir, "resources", "hexagon_orange.png")
 image_hexagon_orange_path = os.path.join(exe_dir, "resources", "hexagon_orange.png")
 image_hexagon_blue_path = os.path.join(exe_dir, "resources", "hexagon_blue.png")
 
