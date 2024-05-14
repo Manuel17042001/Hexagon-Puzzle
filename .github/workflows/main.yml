@@ -65,7 +65,7 @@ jobs:
       - name: Upload Artifact for Linux
         uses: actions/upload-artifact@v2
         with:
-          name: output/linux_exe
+          name: linux_exe
           path: ./src/dist/HexagonPuzzle
 
   build_windows:
@@ -90,7 +90,7 @@ jobs:
       - name: Upload Artifact for Windows
         uses: actions/upload-artifact@v2
         with:
-          name: output/windows_exe
+          name: windows_exe
           path: ./src/dist/HexagonPuzzle.exe
 
   build_macos:
@@ -116,5 +116,5 @@ jobs:
       - name: Upload Artifact for macOS
         uses: actions/upload-artifact@v2
         with:
-          name: output/macos_app
+          name: macos_app
           path: ./src/dist/HexagonPuzzle.app
