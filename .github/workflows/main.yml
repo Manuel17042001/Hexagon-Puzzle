@@ -1,4 +1,4 @@
-name: CI
+name: Build Applications
 
 on:
   push:
@@ -7,40 +7,25 @@ on:
 
 jobs:
   build-android:
-    runs-on: ubuntu-22.04
-    if: false
+    name: Build for Android
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Install Buildozer Dependencies
-        run: |
-          pip install --user --upgrade buildozer
-          sudo apt-get update
-          pip install cython
-          sudo apt-get install -y \
-            build-essential \
-            ccache \
-            git \
-            libffi-dev \
-            libssl-dev \
-            libsdl2-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev \
-            libportmidi-dev \
-            libswscale-dev \
-            libavformat-dev \
-            libavcodec-dev \
-            zlib1g-dev \
-            libsqlite3-dev
-            ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager "build-tools;29.0.0"
-
-      - name: Checkout-Repository
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build APK
-        run: |
-          cd ./src
-          echo y | buildozer -v android debug
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          workdir: test_app
+          buildozer_version: stable
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
 
   build_ubuntu:
     runs-on: ubuntu-latest
