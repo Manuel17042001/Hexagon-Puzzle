@@ -111,10 +111,9 @@ jobs:
         run: |
           cd ./src
           pyinstaller main.spec
-          ls -l -a ./dist
 
       - name: Upload Artifact for macOS
         uses: actions/upload-artifact@v2
         with:
           name: your_script_macos_app
-          path: ./src/dist/main.app
+          path: ./src/dist/main
