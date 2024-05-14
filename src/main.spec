@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=z3_binaries,
-    datas=[('resources', '../resources')],
+    datas=[('resources', '..\resources')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
