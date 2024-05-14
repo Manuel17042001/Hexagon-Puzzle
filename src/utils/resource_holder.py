@@ -10,6 +10,8 @@ pygame.init()
 
 # Bestimme das Ausführungsverzeichnis
 exe_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+exe_dir = os.path.abspath(os.path.join(exe_dir, ".."))
+
 
 # Pfade zur Schriftartdatei relativ zum Ausführungsverzeichnis
 font_path = os.path.join(exe_dir, "resources", "fonts", "Tektur-ExtraBold.ttf")
