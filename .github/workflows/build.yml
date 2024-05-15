@@ -1,9 +1,10 @@
 name: Build Applications
 
 on:
-  push:
-    branches:
-      - workflow
+  workflow_run:
+    workflows: [ "Python Tests" ]
+    types:
+      - completed
 
 jobs:
   build_ubuntu:
