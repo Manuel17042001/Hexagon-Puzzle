@@ -22,7 +22,7 @@ pyz = PYZ(a.pure)
 metadata = {
     'name': 'HexagonPuzzle',
     'version': '1.0',
-    'description': "In this puzzle game with hexagonal shapes, your task is to fit all the puzzle pieces into the given pattern. You have to make sure that the yellow hexagons form a coherent island. Work your way through the challenges and skillfully place the shapes to reach the goal!',
+    'description': 'In this puzzle game with hexagonal shapes, your task is to fit all the puzzle pieces into the given pattern. You have to make sure that the yellow hexagons form a coherent island. Work your way through the challenges and skillfully place the shapes to reach the goal!',
     'author': 'Manuel Reichegger',
     'copyright': 'Copyright (c) 2024, Manuel Reichegger',
 }
