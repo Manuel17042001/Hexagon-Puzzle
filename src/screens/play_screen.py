@@ -55,7 +55,7 @@ def update() -> None:
 
     global last_no_solution_time
     if last_no_solution_time is not None and last_no_solution_time + 1000 > system_utils.time_in_millis():
-        font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+        font_path = resource_holder.font_path
         font_size = int(screen_data.get_window().get_height() * 0.1)
         font = pygame.font.Font(font_path, int(font_size / 3))
         text_no_solution = font.render("No solution found!", True, (255, 0, 0))
@@ -83,7 +83,7 @@ def draw_solved_overlay(screen_data: ScreenData) -> None:
                                 (255, 255, 255), 3)
 
     font_size = int(height * 0.12)
-    font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+    font_path = resource_holder.font_path
     font_title = pygame.font.Font(font_path, font_size)
     font_subtitle = pygame.font.Font(font_path, int(font_size * 0.45))
     text_hexagon_puzzle = font_subtitle.render("Hexagon Puzzle", True, (255, 255, 255))
@@ -455,7 +455,7 @@ def show_loading_screen(screen_data):
         text = "Searching for solution"
 
         font_size = int(height * 0.036)
-        font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+        font_path = resource_holder.font_path
         font_title = pygame.font.Font(font_path, font_size)
         text_ref = font_title.render(text + "." * max_dots, True, (255, 255, 255))
         for _ in range(n_dots % (max_dots + 1)):

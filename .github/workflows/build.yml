@@ -1,0 +1,80 @@
+name: Build Applications
+
+on:
+  push:
+    branches:
+      - master
+      - workflow
+
+jobs:
+  build_ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
+          export Z3_LIBRARY_PATH=/home/runner/.local/lib/python3.10/site-packages/z3/lib/
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build EXE for Linux
+        run: pyinstaller main.spec
+
+      - name: Upload Artifact for Linux
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux_exe
+          path: ./dist/HexagonPuzzle
+
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build EXE for Windows
+        run: pyinstaller main.spec
+
+      - name: Upload Artifact for Windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows_exe
+          path: ./dist/HexagonPuzzle.exe
+
+  build_macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install pygame
+          pip install numpy
+          pip install z3-solver
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build APP for macOS
+        run: |
+          pyinstaller main.spec
+          mv dist/HexagonPuzzle dist/HexagonPuzzle.app
+
+      - name: Upload Artifact for macOS
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos_app
+          path: ./dist/HexagonPuzzle.app

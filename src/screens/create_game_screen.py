@@ -24,7 +24,7 @@ def update() -> None:
 
     draw_background(window)
 
-    font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+    font_path = resource_holder.font_path
     draw_title(window, font_path)
 
     draw_buttons(window, font_path)

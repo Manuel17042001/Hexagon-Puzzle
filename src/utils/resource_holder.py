@@ -1,35 +1,64 @@
 import pygame
+import os
+import sys
 
-import utils.draw_utils as draw_utils
+from utils import draw_utils
 from utils.math_utils import sin60
 
+# Initialisiere Pygame
+pygame.init()
+
+# Bestimme das Ausführungsverzeichnis
+exe_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+
+
+# Pfade zur Schriftartdatei relativ zum Ausführungsverzeichnis
+font_path = os.path.join(exe_dir, "resources", "fonts", "Tektur-ExtraBold.ttf")
+
+# Pfade zu den Bildern relativ zum Ausführungsverzeichnis
+image_background_start_screen_path = os.path.join(exe_dir, "resources", "1000x1500.png")
+image_hexagon_start_screen_path = os.path.join(exe_dir, "resources", "hexagon_splash_screen.png")
+image_icon_path = os.path.join(exe_dir, "resources", "hexagon_orange.png")
+image_hexagon_orange_path = os.path.join(exe_dir, "resources", "hexagon_orange.png")
+image_hexagon_blue_path = os.path.join(exe_dir, "resources", "hexagon_blue.png")
+
+# Lade die Bilder
+image_background_start_screen = pygame.image.load(image_background_start_screen_path)
+image_hexagon_start_screen = pygame.image.load(image_hexagon_start_screen_path)
+image_icon = pygame.image.load(image_icon_path)
+image_hexagon_orange_unscaled = pygame.image.load(image_hexagon_orange_path)
+image_hexagon_blue_unscaled = pygame.image.load(image_hexagon_blue_path)
+
+# Skaliere die Hexagon-Bilder auf die gewünschte Größe
 __side_length = 10
+image_hexagon_orange = pygame.transform.scale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
+image_hexagon_blue = pygame.transform.scale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
 
-image_background_start_screen = pygame.image.load("./resources/background/1000x1500.png")
-image_hexagon_start_screen = pygame.image.load("./resources/hexagon_splash_screen.png")
-image_icon = pygame.image.load("./resources/icon.png")
 
-image_hexagon_orange_unscaled = pygame.image.load("./resources/hexagon_orange.png")
-image_hexagon_blue_unscaled = pygame.image.load("./resources/hexagon_blue.png")
-image_hexagon_orange = pygame.transform.smoothscale(image_hexagon_orange_unscaled, (2 * __side_length, 2 * __side_length))
-image_hexagon_blue = pygame.transform.smoothscale(image_hexagon_blue_unscaled, (2 * __side_length, 2 * __side_length))
+image_rotation_left_path = os.path.join(exe_dir, "resources", "rotation_left.png")
+image_rotation_right_path = os.path.join(exe_dir, "resources", "rotation_right.png")
+image_flip_vertical_path = os.path.join(exe_dir, "resources", "flip_vertical.png")
+image_flip_horizontal_path = os.path.join(exe_dir, "resources", "flip_horizontal.png")
+image_icon_exit_path = os.path.join(exe_dir, "resources", "exit_icon.png")
+image_icon_hint_path = os.path.join(exe_dir, "resources", "hint_icon.png")
+image_icon_colored_hint_path = os.path.join(exe_dir, "resources", "colored_hint_icon.png")
 
-image_rotation_left_unscaled = pygame.image.load("./resources/rotation_left.png")
-image_rotation_right_unscaled = pygame.image.load("./resources/rotation_right.png")
+# Lade die Bilder
+image_rotation_left_unscaled = pygame.image.load(image_rotation_left_path)
+image_rotation_right_unscaled = pygame.image.load(image_rotation_right_path)
+image_flip_vertical_unscaled = pygame.image.load(image_flip_vertical_path)
+image_flip_horizontal_unscaled = pygame.image.load(image_flip_horizontal_path)
+image_icon_exit_unscaled = pygame.image.load(image_icon_exit_path)
+image_icon_hint_unscaled = pygame.image.load(image_icon_hint_path)
+image_icon_colored_hint_unscaled = pygame.image.load(image_icon_colored_hint_path)
+
+# Weise die geladenen Bilder den entsprechenden Variablen zu
 image_rotation_left = image_rotation_left_unscaled
 image_rotation_right = image_rotation_right_unscaled
-
-image_flip_vertical_unscaled = pygame.image.load("./resources/flip_vertical.png")
-image_flip_horizontal_unscaled = pygame.image.load("./resources/flip_horizontal.png")
 image_flip_vertical = image_flip_vertical_unscaled
 image_flip_horizontal = image_flip_horizontal_unscaled
-
-image_icon_exit_unscaled = pygame.image.load("./resources/exit_icon.png")
 image_icon_exit = image_icon_exit_unscaled
-
-image_icon_hint_unscaled = pygame.image.load("./resources/hint_icon.png")
 image_icon_hint = image_icon_hint_unscaled
-image_icon_colored_hint_unscaled = pygame.image.load("./resources/colored_hint_icon.png")
 image_icon_colored_hint = image_icon_colored_hint_unscaled
 
 grid_image = pygame.Surface((0, 0), pygame.SRCALPHA)
