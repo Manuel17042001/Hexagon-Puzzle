@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from model.hexagon import Hexagon
@@ -21,7 +22,7 @@ class TestTile(unittest.TestCase):
         self.tile = Tile(0, 0, hexagons)
 
     def test_rotate_right(self):
-        self.tile.rotate(True)
+        self.tile.rotate(False)
 
         hexagons = self.tile.get_hexagons()
         assert (hexagons.__contains__(Hexagon(-1, 0, 0)))
@@ -32,7 +33,7 @@ class TestTile(unittest.TestCase):
         assert (hexagons.__contains__(Hexagon(0, 3, 0)))
 
     def test_rotate_left(self):
-        self.tile.rotate(False)
+        self.tile.rotate(True)
 
         hexagons = self.tile.get_hexagons()
         assert (hexagons.__contains__(Hexagon(0, -1, 0)))
