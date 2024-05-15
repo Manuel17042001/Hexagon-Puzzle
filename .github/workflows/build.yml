@@ -70,7 +70,7 @@ jobs:
 
       - name: Build APP for macOS
         run: |
-          pyinstaller main.spec
+          pyinstaller pyinstaller.spec
           mv dist/HexagonPuzzle dist/HexagonPuzzle.app
 
       - name: Upload Artifact for macOS
