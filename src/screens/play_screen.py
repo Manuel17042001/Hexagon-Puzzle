@@ -153,7 +153,7 @@ def draw_layout(screen_data: ScreenData) -> None:
     game_time = int(game.get_time())
     seconds = game_time % 60
     minute = game_time // 60
-    font_path = "./resources/fonts/Tektur-ExtraBold.ttf"
+    font_path = resource_holder.font_path
     font_size = int(window_height * 0.12)
     font_time = pygame.font.Font(font_path, int(font_size * 0.2))
     text_time = font_time.render(f" Time {str(minute).zfill(2)}:{str(seconds).zfill(2)}", True, (255, 255, 255))
