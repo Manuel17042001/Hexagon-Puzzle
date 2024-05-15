@@ -5,7 +5,7 @@ from PyInstaller.utils.hooks import collect_dynamic_libs
 z3_binaries = collect_dynamic_libs('z3')
 
 a = Analysis(
-    ['main.py'],
+    ['src/main.py'],
     pathex=[],
     binaries=z3_binaries,
     datas=[('utils/resources', 'resources')],
