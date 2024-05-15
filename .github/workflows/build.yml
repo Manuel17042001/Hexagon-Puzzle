@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build EXE for Linux
-        run: pyinstaller main.spec
+        run: pyinstaller pyinstaller.spec
 
       - name: Upload Artifact for Linux
         uses: actions/upload-artifact@v2
@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build EXE for Windows
-        run: pyinstaller main.spec
+        run: pyinstaller pyinstaller.spec
 
       - name: Upload Artifact for Windows
         uses: actions/upload-artifact@v2
