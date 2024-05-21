@@ -4,6 +4,7 @@ import queue
 import threading
 import time
 
+import numpy as np
 import pygame
 
 from model import hexagonal_map
@@ -136,10 +137,31 @@ def draw_layout(screen_data: ScreenData) -> None:
     start_grid_y = (grid_y_start - 1) * side_length * 1.5
 
     if not game.is_play_ground_initialised():
+        start_tile_area = window_width / 2, window_height / 15
+        size_tile_area = window_width / 2, window_height * 41 / 60
         for tile in game.get_map().get_tiles():
             if not tile.is_moveable():
                 tile.set_pos_x(start_grid_x)
                 tile.set_pos_y(start_grid_y)
+            else:
+                count = 0
+                intersection = True
+                while intersection and count < 500:
+                    intersection = False
+                    rel_coord = np.random.rand(2)
+                    abs_coord = rel_coord * size_tile_area + start_tile_area
+                    tile.set_pos_x(abs_coord[0])
+                    tile.set_pos_y(abs_coord[1])
+                    for hexagon in tile.get_hexagons():
+                        hexagon_x, hexagon_y = hexagon.get_coordinates()
+                        hexagon_t_x = tile.get_pos_x() + (2 * hexagon_x + hexagon_y % 2) * side_length * sin60
+                        hexagon_t_y = tile.get_pos_y() + hexagon_y * side_length * 1.5
+                        if (hexagon_t_x < start_tile_area[0] + 2.5 * side_length or
+                                hexagon_t_y < start_tile_area[1] + 2.5 * side_length or
+                                hexagon_t_x > start_tile_area[0] + size_tile_area[0] - 2.5 * side_length or
+                                hexagon_t_y > start_tile_area[1] + size_tile_area[1] - 2.5 * side_length):
+                            intersection = True
+                            continue
         game.set_play_ground_initialised()
 
     window.blit(resource_holder.grid_image, (0, 0))

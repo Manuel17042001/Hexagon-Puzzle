@@ -196,7 +196,7 @@ class HexagonalMap(object):
         window_width, window_height = ScreenData().get_window().get_size()
 
         tiles = [
-            Tile(window_width * 3 / 4, window_height * 3 / 8, [])
+            Tile(0, 0, [])
             for _ in range(np.max(self.__puzzle_map))]
 
         for x in range(1, self.__width - 1):
