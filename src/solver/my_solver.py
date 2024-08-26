@@ -110,28 +110,28 @@ def solve(init_rows, game):
     rows = [Bool('row_%d' % r) for r in range(len(init_rows))]
 
     # make inverse tables:
-    inv_tbl_board = {}
-    inv_tbl_poly = {}
+    inv_tbl_grid = {}
+    inv_tbl_tile = {}
 
     cur_row = 0
     for tile_index, hexagons_coordinates in init_rows:
-        if tile_index not in inv_tbl_poly:
-            inv_tbl_poly[tile_index] = []
-        inv_tbl_poly[tile_index].append(cur_row)
+        if tile_index not in inv_tbl_tile:
+            inv_tbl_tile[tile_index] = []
+        inv_tbl_tile[tile_index].append(cur_row)
         for hexagon_coordinates in hexagons_coordinates:
             coord, color = hexagon_coordinates
-            if coord not in inv_tbl_board:
-                inv_tbl_board[coord] = []
-            inv_tbl_board[coord].append(cur_row)
+            if coord not in inv_tbl_grid:
+                inv_tbl_grid[coord] = []
+            inv_tbl_grid[coord].append(cur_row)
         cur_row = cur_row + 1
 
-    for tile in inv_tbl_poly:
-        tmp = [rows[q] for q in inv_tbl_poly[tile]]
+    for tile in inv_tbl_tile:
+        tmp = [rows[q] for q in inv_tbl_tile[tile]]
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
-    for tile in inv_tbl_board:
-        tmp = [rows[q] for q in inv_tbl_board[tile]]
+    for tile in inv_tbl_grid:
+        tmp = [rows[q] for q in inv_tbl_grid[tile]]
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
