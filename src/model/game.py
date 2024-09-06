@@ -59,6 +59,7 @@ class Game:
         grid_width, grid_height = self.get_map().get_grid_size()
 
         row_tile = copy.deepcopy(self.get_map().get_tiles())
+        row_tile.sort(key=lambda tile: len(tile.get_hexagons()), reverse=True)
         init_rows = []
         for i in range(len(row_tile)):
             init_rows = init_rows + my_solver.find_all_placements(grid_width, grid_height, row_tile[i], i, game)
