@@ -126,12 +126,12 @@ def solve(init_rows, game):
         cur_row = cur_row + 1
 
     for tile in inv_tbl_tile:
-        tmp = [rows[q] for q in inv_tbl_tile[tile]]
+        tmp = [rows[i] for i in inv_tbl_tile[tile]]
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
     for tile in inv_tbl_grid:
-        tmp = [rows[q] for q in inv_tbl_grid[tile]]
+        tmp = [rows[i] for i in inv_tbl_grid[tile]]
         s.add(AtMost(*(tmp + [1])))
         s.add(AtLeast(*(tmp + [1])))
 
